@@ -2,7 +2,7 @@ package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
 
-import ga.rugal.gracker.core.dao.ObjectDao;
+import ga.rugal.gracker.core.dao.BlobDao;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -18,11 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Rugal Bernstein
  */
 @org.springframework.stereotype.Repository
-public class ObjectDaoImpl implements ObjectDao {
+public class BlobDaoImpl implements BlobDao {
 
   @Autowired
   private Repository repository;
 
+  /**
+   * {@inheritDoc }
+   */
   @Override
   public ObjectId create(final byte[] bytes) throws IOException {
     final ObjectInserter inserter = this.repository.newObjectInserter();
@@ -31,6 +34,9 @@ public class ObjectDaoImpl implements ObjectDao {
     return blobId;
   }
 
+  /**
+   * {@inheritDoc }
+   */
   @Override
   public ObjectLoader read(final ObjectId blobId) throws IOException {
     final ObjectReader objectReader = this.repository.newObjectReader();

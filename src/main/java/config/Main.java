@@ -2,8 +2,8 @@ package config;
 
 import java.io.IOException;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
  * Main entrance class.
@@ -21,6 +21,8 @@ public class Main {
    * @throws IOException test
    */
   public static void main(final String[] args) throws IOException {
-    SpringApplication.run(Main.class, args);
+    new SpringApplicationBuilder(Main.class)
+      .logStartupInfo(false)
+      .run(args);
   }
 }

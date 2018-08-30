@@ -2,6 +2,7 @@ package config;
 
 import java.io.IOException;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -20,6 +21,6 @@ public class Main {
    * @throws IOException test
    */
   public static void main(final String[] args) throws IOException {
-    // Open an existing repository
+    SpringApplication.run(Main.class, args);
   }
 }

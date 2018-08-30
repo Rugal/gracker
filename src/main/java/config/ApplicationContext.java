@@ -10,10 +10,12 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.springframework.boot.ExitCodeExceptionMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.shell.ExitRequest;
 
 /**
  * Java based application context configuration class. <BR>
@@ -22,7 +24,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * @author Rugal Bernstein
  * @since 0.2
  */
-@ComponentScan
+@ComponentScan(basePackageClasses = {ga.PackageInfo.class,
+                                     ga.rugal.gracker.shell.PackageInfo.class})
 @Configuration
 @Slf4j
 public class ApplicationContext {
@@ -85,5 +88,21 @@ public class ApplicationContext {
   @Bean
   public PersonIdent personIdent() {
     return new PersonIdent("Rugal Bernstein", "test@mail.com");
+  }
+
+  /**
+   * Exit if there is exception.
+   *
+   * @return
+   */
+  @Bean
+  public ExitCodeExceptionMapper exitCodeExceptionMapper() {
+    return exception -> {
+      Throwable e = exception;
+      while (e != null && !(e instanceof ExitRequest)) {
+        e = e.getCause();
+      }
+      return e == null ? 1 : ((ExitRequest) e).status();
+    };
   }
 }

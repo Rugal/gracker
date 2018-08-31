@@ -3,6 +3,7 @@ package ga.rugal.gracker.core.dao.impl;
 import java.io.IOException;
 
 import ga.rugal.gracker.core.dao.CommitDao;
+import ga.rugal.gracker.core.entity.Issue;
 
 import org.eclipse.jgit.lib.CommitBuilder;
 import org.eclipse.jgit.lib.ObjectId;
@@ -28,13 +29,29 @@ public class CommitDaoImpl implements CommitDao {
   @Autowired
   private PersonIdent personIdent;
 
+  /**
+   * Get person identity from issue user, otherwise, use default identity.
+   *
+   * @param user issue user
+   *
+   * @return actual identity
+   */
+  private PersonIdent getPersonIdent(final Issue.User user) {
+    return (null == user)
+           ? this.personIdent
+           : new PersonIdent(user.getAuthor(), user.getEmail());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public ObjectId create(final String message, final ObjectId treeId) throws IOException {
+  public ObjectId create(final Issue.Commit commit, final ObjectId treeId) throws IOException {
     final CommitBuilder commitBuilder = new CommitBuilder();
     commitBuilder.setTreeId(treeId);
-    commitBuilder.setMessage(message);
-    commitBuilder.setAuthor(this.personIdent);
-    commitBuilder.setCommitter(this.personIdent);
+    commitBuilder.setMessage(commit.getStatus().name());
+    commitBuilder.setAuthor(this.getPersonIdent(commit.getAssigner()));
+    commitBuilder.setCommitter(this.getPersonIdent(commit.getAssignee()));
     final ObjectInserter objectInserter = this.repository.newObjectInserter();
     final ObjectId commitId = objectInserter.insert(commitBuilder);
     objectInserter.flush();

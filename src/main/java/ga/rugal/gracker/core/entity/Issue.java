@@ -1,61 +1,80 @@
 package ga.rugal.gracker.core.entity;
 
-import lombok.Value;
+import java.util.List;
+
+import lombok.Data;
 
 /**
  * Issue entity.
  *
  * @author Rugal Bernstein
  */
-@Value
+@Data
 public class Issue {
 
-  static enum Status {
-    OPEN,
-    IN_PROGRESS,
-    DONE,
-    CLOSE
+  private Commit commit;
+
+  private Content content;
+
+  @Data
+  public static class Commit {
+
+    /**
+     * Author.<BR>
+     * In commit tree.
+     */
+    private User assigner;
+
+    /**
+     * Committer.<BR>
+     * In commit tree.
+     */
+    private User assignee;
+
+    /**
+     * In commit message.
+     */
+    private Status status;
   }
 
-  /**
-   * In commit message.
-   */
-  private long createTime;
+  @Data
+  public static class Content {
 
-  /**
-   * In commit message.
-   */
-  private long updateTime;
+    /**
+     * Title file.
+     */
+    private String title;
 
-  /**
-   * Author.<BR>
-   * In commit message.
-   */
-  private User assigner;
+    /**
+     * Body file.
+     */
+    private String body;
 
-  /**
-   * Committer.<BR>
-   * In commit message.
-   */
-  private User assignee;
+    /**
+     * Label file.
+     */
+    private List<String> label;
+  }
 
-  /**
-   * Title file.
-   */
-  private String title;
+  @Data
+  public static class User {
 
-  /**
-   * Body file.
-   */
-  private String body;
+    /**
+     * Author name.<BR>
+     * In commit tree.
+     */
+    private String author;
 
-  /**
-   * In commit message.
-   */
-  private Status status;
+    /**
+     * Author email.<BR>
+     * In commit tree.
+     */
+    private String email;
 
-  /**
-   * Label file.
-   */
-  private String[] labels;
+    /**
+     * Along with author.<BR>
+     * In commit tree.
+     */
+    private long time;
+  }
 }

@@ -7,4 +7,10 @@ public interface SystemDefaultProperty {
   String NULL = "NULL";
 
   String DEFAULT_EDITOR = "vim";
+
+  String TITLE = "title";
+
+  String LABEL = "label";
+
+  String BODY = "body";
 }

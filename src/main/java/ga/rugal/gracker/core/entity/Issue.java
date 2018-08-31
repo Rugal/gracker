@@ -10,9 +10,52 @@ import lombok.Value;
 @Value
 public class Issue {
 
-  private long time;
+  static enum Status {
+    OPEN,
+    IN_PROGRESS,
+    DONE,
+    CLOSE
+  }
 
-  private String author;
+  /**
+   * In commit message.
+   */
+  private long createTime;
 
-  private String email;
+  /**
+   * In commit message.
+   */
+  private long updateTime;
+
+  /**
+   * Author.<BR>
+   * In commit message.
+   */
+  private User assigner;
+
+  /**
+   * Committer.<BR>
+   * In commit message.
+   */
+  private User assignee;
+
+  /**
+   * Title file.
+   */
+  private String title;
+
+  /**
+   * Body file.
+   */
+  private String body;
+
+  /**
+   * In commit message.
+   */
+  private Status status;
+
+  /**
+   * Label file.
+   */
+  private String[] labels;
 }

@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.shell.ParameterResolver;
+import org.springframework.shell.Shell;
 
 /**
  *
@@ -20,8 +22,8 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class UnitTestApplicationContext {
 
-  @ConditionalOnMissingBean
   @Bean
+  @ConditionalOnMissingBean
   public Random random() {
     return Mockito.mock(Random.class);
   }
@@ -36,5 +38,17 @@ public class UnitTestApplicationContext {
   @Scope("prototype")
   public RefDatabase refDatabase() {
     return Mockito.mock(RefDatabase.class);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ParameterResolver parameterResolver() {
+    return Mockito.mock(ParameterResolver.class);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public Shell shell() {
+    return Mockito.mock(Shell.class);
   }
 }

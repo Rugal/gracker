@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ga.rugal.gracker.core.dao.BlobDao;
 
+import lombok.Getter;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BlobDaoImpl implements BlobDao {
 
   @Autowired
+  @Getter
   private Repository repository;
 
   /**
@@ -39,7 +41,7 @@ public class BlobDaoImpl implements BlobDao {
    */
   @Override
   public ObjectLoader read(final ObjectId blobId) throws IOException {
-    final ObjectReader objectReader = this.repository.newObjectReader();
-    return objectReader.open(blobId);
+    final ObjectReader reader = this.repository.newObjectReader();
+    return reader.open(blobId);
   }
 }

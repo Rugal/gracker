@@ -2,6 +2,8 @@ package config;
 
 public interface SystemDefaultProperty {
 
+  int ISSUE_NUMBER_LENGTH = 6;
+
   String ENCODE = "UTF-8";
 
   String NULL = "NULL";

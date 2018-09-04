@@ -1,13 +1,12 @@
 package ga.rugal.gracker.shell.command;
 
-import java.io.File;
 import java.io.IOException;
 
 import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
-import ga.rugal.gracker.core.entity.Status;
+import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +19,8 @@ import org.springframework.shell.standard.ShellOption;
 @Slf4j
 public class IssueCommand {
 
-  private static final String EDITOR = "EDITOR";
-
-  private static final String GIT_EDITOR = "GIT_EDITOR";
+  @Autowired
+  private EditorService editorService;
 
   @Autowired
   private IssueService issueService;
@@ -30,28 +28,6 @@ public class IssueCommand {
   private boolean useEditor(final String title, final String content) {
     return title.equals(SystemDefaultProperty.NULL)
            || content.equals(SystemDefaultProperty.NULL);
-  }
-
-  /**
-   * Get editor from system by using environment variable.
-   *
-   * @return editor name
-   */
-  private String getEditor() {
-    if (null != System.getenv(GIT_EDITOR)) {
-      final String env = System.getenv(GIT_EDITOR);
-      LOG.trace("Using GIT_EDITOR [{}]", env);
-      return System.getenv(GIT_EDITOR);
-    }
-
-    if (null != System.getenv(EDITOR)) {
-      final String env = System.getenv(EDITOR);
-      LOG.trace("Using EDITOR [{}]", env);
-      return System.getenv(EDITOR);
-    }
-
-    LOG.trace("Using DEFAULT EDITOR [{}]", SystemDefaultProperty.DEFAULT_EDITOR);
-    return SystemDefaultProperty.DEFAULT_EDITOR;
   }
 
   /**
@@ -69,28 +45,17 @@ public class IssueCommand {
   public String create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
                        final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body)
     throws IOException, InterruptedException {
-
-    final Issue issue = new Issue();
-
-    if (this.useEditor(title, body)) {
-      final File tempFile = File.createTempFile("gracker_", ".tmp");
-      tempFile.deleteOnExit();
-      LOG.trace("Write content to temp file [{}]", tempFile.getPath());
-      final ProcessBuilder pb = new ProcessBuilder();
-      pb.command(this.getEditor(), tempFile.getPath()).inheritIO();
-      return "test";
-    }
-    //create issue right away with the content that uses provides
-    final Issue.Content content = new Issue.Content();
-    content.setBody(body);
-    content.setTitle(title);
-    issue.setContent(content);
-    final Issue.Commit commit = new Issue.Commit();
-    commit.setStatus(Status.OPEN);
-    issue.setCommit(commit);
+    final Issue.Content content = this.useEditor(title, body)
+                                  ? this.editorService.openEditor()
+                                  : Issue.builder().title(title).body(body).build().getContent();
+    final Issue issue = Issue.builder()
+      .content(content)
+      .build();
 
     final RawIssue rawIssue = this.issueService.create(issue);
-    return rawIssue.getCommit().getName();
+    return String.format("New issue created [%s]",
+                         rawIssue.getCommit().getName()
+                           .substring(0, SystemDefaultProperty.ISSUE_NUMBER_LENGTH));
   }
 
   @ShellMethod("List issues.")

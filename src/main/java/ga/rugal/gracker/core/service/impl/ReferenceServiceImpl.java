@@ -1,9 +1,15 @@
 package ga.rugal.gracker.core.service.impl;
 
+import java.io.IOException;
+
+import config.SystemDefaultProperty;
+
 import ga.rugal.gracker.core.dao.ReferenceDao;
 import ga.rugal.gracker.core.service.ReferenceService;
 
 import lombok.Getter;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +24,12 @@ public class ReferenceServiceImpl implements ReferenceService {
   @Autowired
   @Getter
   private ReferenceDao dao;
+
+  @Override
+  public RefUpdate.Result create(final String name, final ObjectId commitId) throws IOException {
+    return this.dao.create(String.format("refs/%s/%s",
+                                         SystemDefaultProperty.REFERENCE,
+                                         name),
+                           commitId);
+  }
 }

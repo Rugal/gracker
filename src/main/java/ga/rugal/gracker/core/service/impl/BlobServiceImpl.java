@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import ga.rugal.gracker.core.dao.BlobDao;
 import ga.rugal.gracker.core.service.BlobService;
@@ -28,47 +29,32 @@ public class BlobServiceImpl implements BlobService {
   }
 
   /**
-   * Create blob object for title.
-   *
-   * @param title input string
-   *
-   * @return blob
-   *
-   * @throws IOException unable to write to file system
+   * {@inheritDoc}
    */
+  @Override
   public ObjectId title(final String title) throws IOException {
     return this.createBlob(title);
   }
 
   /**
-   * Create blob object for body.
-   *
-   * @param body input string
-   *
-   * @return blob
-   *
-   * @throws IOException unable to write to file system
+   * {@inheritDoc}
    */
+  @Override
   public ObjectId body(final String body) throws IOException {
     return this.createBlob(body);
   }
 
   /**
-   * Create blob object for label.
-   *
-   * @param labels label array
-   *
-   * @return blob
-   *
-   * @throws IOException unable to write to file system
+   * {@inheritDoc}
    */
-  public ObjectId label(final String[] labels) throws IOException {
+  @Override
+  public ObjectId label(final List<String> label) throws IOException {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < labels.length; i++) {
+    for (int i = 0; i < label.size(); i++) {
       if (0 != i) {
         sb.append(",");
       }
-      sb.append(labels[i]);
+      sb.append(label.get(i));
     }
     return this.createBlob(sb.toString());
   }

@@ -13,7 +13,7 @@ import org.eclipse.jgit.lib.ObjectLoader;
 public interface BlobDao {
 
   /**
-   * Create blob object.
+   * Create blob object from byte array.
    *
    * @param bytes input data
    *
@@ -21,7 +21,7 @@ public interface BlobDao {
    *
    * @throws IOException whenever unable to write to file system
    */
-  ObjectId create(final byte[] bytes) throws IOException;
+  ObjectId create(byte[] bytes) throws IOException;
 
   /**
    * Read blob.
@@ -32,5 +32,5 @@ public interface BlobDao {
    *
    * @throws IOException whenever unable to read from file system
    */
-  ObjectLoader read(final ObjectId blobId) throws IOException;
+  ObjectLoader read(ObjectId blobId) throws IOException;
 }

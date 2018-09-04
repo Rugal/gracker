@@ -15,6 +15,8 @@ public class RawIssue {
 
   private ObjectId commit;
 
+  private Content content;
+
   @Data
   public static class Content {
 

@@ -35,7 +35,9 @@ public class TreeDaoImpl implements TreeDao {
     final TreeFormatter treeFormatter = new TreeFormatter();
     treeFormatter.append(SystemDefaultProperty.TITLE, FileMode.REGULAR_FILE, content.getTitle());
     treeFormatter.append(SystemDefaultProperty.BODY, FileMode.REGULAR_FILE, content.getBody());
-    treeFormatter.append(SystemDefaultProperty.LABEL, FileMode.REGULAR_FILE, content.getLabel());
+    if (null != content.getLabel()) {
+      treeFormatter.append(SystemDefaultProperty.LABEL, FileMode.REGULAR_FILE, content.getLabel());
+    }
     final ObjectId treeId = objectInserter.insert(treeFormatter);
     objectInserter.flush();
     return treeId;

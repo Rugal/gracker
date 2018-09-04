@@ -13,4 +13,6 @@ public interface SystemDefaultProperty {
   String LABEL = "label";
 
   String BODY = "body";
+
+  String REFERENCE = "issue";
 }

@@ -5,7 +5,13 @@ import java.io.IOException;
 
 import config.SystemDefaultProperty;
 
+import ga.rugal.gracker.core.entity.Issue;
+import ga.rugal.gracker.core.entity.RawIssue;
+import ga.rugal.gracker.core.entity.Status;
+import ga.rugal.gracker.core.service.IssueService;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -17,6 +23,9 @@ public class IssueCommand {
   private static final String EDITOR = "EDITOR";
 
   private static final String GIT_EDITOR = "GIT_EDITOR";
+
+  @Autowired
+  private IssueService issueService;
 
   private boolean useEditor(final String title, final String content) {
     return title.equals(SystemDefaultProperty.NULL)
@@ -57,21 +66,31 @@ public class IssueCommand {
    * @throws InterruptedException test
    */
   @ShellMethod("Create issue.")
-  public int create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
-                    final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body)
+  public String create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
+                       final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body)
     throws IOException, InterruptedException {
 
-    if (!this.useEditor(title, body)) {
-      //create issue right away with the content that uses provides
-      return 1;
-    }
+    final Issue issue = new Issue();
 
-    final File tempFile = File.createTempFile("gracker_", ".tmp");
-    tempFile.deleteOnExit();
-    LOG.trace("Write content to temp file [{}]", tempFile.getPath());
-    final ProcessBuilder pb = new ProcessBuilder();
-    pb.command(this.getEditor(), tempFile.getPath()).inheritIO();
-    return pb.start().waitFor();
+    if (this.useEditor(title, body)) {
+      final File tempFile = File.createTempFile("gracker_", ".tmp");
+      tempFile.deleteOnExit();
+      LOG.trace("Write content to temp file [{}]", tempFile.getPath());
+      final ProcessBuilder pb = new ProcessBuilder();
+      pb.command(this.getEditor(), tempFile.getPath()).inheritIO();
+      return "test";
+    }
+    //create issue right away with the content that uses provides
+    final Issue.Content content = new Issue.Content();
+    content.setBody(body);
+    content.setTitle(title);
+    issue.setContent(content);
+    final Issue.Commit commit = new Issue.Commit();
+    commit.setStatus(Status.OPEN);
+    issue.setCommit(commit);
+
+    final RawIssue rawIssue = this.issueService.create(issue);
+    return rawIssue.getCommit().getName();
   }
 
   @ShellMethod("List issues.")

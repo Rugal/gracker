@@ -1,6 +1,5 @@
 package ga.rugal.gracker.core.dao.impl;
 
-
 import ga.rugal.gracker.core.entity.Issue;
 
 import ga.UnitTestBase;
@@ -18,9 +17,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommitDaoImplTest extends UnitTestBase {
-
-  @Autowired
-  private byte[] testData;
 
   @Autowired
   private Repository repository;

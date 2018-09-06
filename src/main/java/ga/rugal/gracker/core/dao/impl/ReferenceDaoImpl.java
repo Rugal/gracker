@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ga.rugal.gracker.core.dao.ReferenceDao;
 
+import lombok.Setter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.RefUpdate;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ReferenceDaoImpl implements ReferenceDao {
 
   @Autowired
+  @Setter
   private RefDatabase refDatabase;
 
   @Override

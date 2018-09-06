@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.exception.ReadabilityException;
-import ga.rugal.gracker.core.exception.WritabilityException;
 
 /**
  * Interface for editor service.
@@ -26,12 +25,10 @@ public interface EditorService {
    * @return issue content object
    *
    * @throws IOException          when unable to access file
-   * @throws WritabilityException when unable to write to file
    * @throws ReadabilityException when unable to read from file
    * @throws InterruptedException when editor process is interrupted
    */
   Issue.Content openEditor() throws InterruptedException,
-                                    WritabilityException,
                                     ReadabilityException,
                                     IOException;
 }

@@ -6,6 +6,7 @@ import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
+import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
 
@@ -31,26 +32,35 @@ public class IssueCommand {
   }
 
   /**
-   * Create an issue.
+   * Create an issue.<BR>
+   * User can either create issue directly through command line parameters, or by editing a temp
+   * file.<BR>
    *
    * @param title issue title
    * @param body  issue body
    *
-   * @return
+   * @return Issue creation status
    *
-   * @throws IOException          test
-   * @throws InterruptedException test
+   * @throws IOException          when unable to access file system
+   * @throws InterruptedException when editor process is interrupted
    */
   @ShellMethod("Create issue.")
   public String create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
                        final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body)
     throws IOException, InterruptedException {
-    final Issue.Content content = this.useEditor(title, body)
-                                  ? this.editorService.openEditor()
-                                  : Issue.builder().title(title).body(body).build().getContent();
-    final Issue issue = Issue.builder()
-      .content(content)
-      .build();
+
+    final Issue issue;
+    try {
+      final Issue.Content content = this.useEditor(title, body)
+                                    ? this.editorService.openEditor()
+                                    : Issue.builder().title(title).body(body).build().getContent();
+      issue = Issue.builder()
+        .content(content)
+        .build();
+    } catch (final ReadabilityException e) {
+      //Means user didn't fill the content
+      return e.getMessage();
+    }
 
     final RawIssue rawIssue = this.issueService.create(issue);
     return String.format("New issue created [%s]",

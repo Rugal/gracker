@@ -1,5 +1,6 @@
 package config;
 
+import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.util.StringUtil;
 
@@ -44,6 +45,24 @@ public class TestApplicationContext {
     content.setBody(Mockito.mock(ObjectId.class));
     content.setLabel(Mockito.mock(ObjectId.class));
     return content;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public Issue.User user() {
+    final Issue.User user = new Issue.User();
+    user.setAuthor("Rugal Bernstein");
+    user.setEmail("test@mail.com");
+    return user;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public Issue.Commit issueCommit(final Issue.User user) {
+    final Issue.Commit commit = new Issue.Commit();
+    commit.setAssignee(user);
+    commit.setAssigner(user);
+    return commit;
   }
 
   @Bean

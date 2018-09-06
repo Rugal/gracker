@@ -5,6 +5,7 @@ import java.io.IOException;
 import ga.rugal.gracker.core.dao.CommitDao;
 import ga.rugal.gracker.core.entity.Issue;
 
+import lombok.Setter;
 import org.eclipse.jgit.lib.CommitBuilder;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
@@ -24,9 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CommitDaoImpl implements CommitDao {
 
   @Autowired
+  @Setter
   private Repository repository;
 
   @Autowired
+  @Setter
   private PersonIdent personIdent;
 
   /**
@@ -52,16 +55,16 @@ public class CommitDaoImpl implements CommitDao {
     commitBuilder.setMessage(commit.getStatus().name());
     commitBuilder.setAuthor(this.getPersonIdent(commit.getAssigner()));
     commitBuilder.setCommitter(this.getPersonIdent(commit.getAssignee()));
-    final ObjectInserter objectInserter = this.repository.newObjectInserter();
-    final ObjectId commitId = objectInserter.insert(commitBuilder);
-    objectInserter.flush();
+    final ObjectInserter inserter = this.repository.newObjectInserter();
+    final ObjectId commitId = inserter.insert(commitBuilder);
+    inserter.flush();
     return commitId;
   }
 
   @Override
   public RevCommit read(final ObjectId commitId) throws IOException {
-    final ObjectReader objectReader = this.repository.newObjectReader();
-    final ObjectLoader objectLoader = objectReader.open(commitId);
-    return RevCommit.parse(objectLoader.getBytes());
+    final ObjectReader reader = this.repository.newObjectReader();
+    final ObjectLoader loader = reader.open(commitId);
+    return RevCommit.parse(loader.getBytes());
   }
 }

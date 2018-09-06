@@ -1,5 +1,6 @@
 package ga.rugal.gracker.core.entity;
 
+import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
@@ -134,6 +135,6 @@ public class Issue {
      * Along with author.<BR>
      * In commit tree.
      */
-    private long time;
+    private long time = Instant.now().getEpochSecond();
   }
 }

@@ -34,4 +34,8 @@ public class IssueServiceImpl implements IssueService {
     this.referenceService.create(rawIssue.getCommit().getName(), rawIssue.getCommit());
     return rawIssue;
   }
+
+  public void test() {
+
+  }
 }

@@ -3,12 +3,14 @@ package ga.rugal.gracker.shell.command;
 import java.io.IOException;
 
 import config.SystemDefaultProperty;
+import config.TerminalColor;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
+import ga.rugal.gracker.core.service.TerminalService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class IssueCommand {
 
   @Autowired
   private IssueService issueService;
+
+  @Autowired
+  private TerminalService terminalService;
 
   private boolean useEditor(final String title, final String content) {
     return title.equals(SystemDefaultProperty.NULL)
@@ -68,9 +73,14 @@ public class IssueCommand {
                            .substring(0, SystemDefaultProperty.ISSUE_NUMBER_LENGTH));
   }
 
+  /**
+   * List issue as requested.
+   *
+   * @return the content to be displayed
+   */
   @ShellMethod("List issues.")
-  public int ls() {
-    return 0;
+  public String ls() {
+    return this.terminalService.print("Rugal Bernstein", TerminalColor.RED_F);
   }
 
   @ShellMethod("Show issue detail.")

@@ -7,6 +7,8 @@ import java.util.Scanner;
 import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
+import ga.rugal.gracker.core.exception.ReadabilityException;
+import ga.rugal.gracker.core.exception.WritabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,18 +52,21 @@ public class EditorServiceImpl implements EditorService {
    * {@inheritDoc}
    */
   @Override
-  public Issue.Content openEditor() throws IOException, InterruptedException {
+  public Issue.Content openEditor() throws InterruptedException,
+                                           WritabilityException,
+                                           ReadabilityException,
+                                           IOException {
     final File tempFile = File.createTempFile("gracker_", ".tmp");
     tempFile.deleteOnExit();
     LOG.trace("Write content to temp file [{}]", tempFile.getPath());
     final ProcessBuilder pb = new ProcessBuilder();
     pb.command(this.getEditor(), tempFile.getPath()).inheritIO();
     if (0 != pb.start().waitFor()) {
-      throw new IOException("Unable to write issue content to file");
+      throw new WritabilityException("Unable to write issue content to file");
     }
     final Scanner scanner = new Scanner(tempFile, SystemDefaultProperty.ENCODE);
     if (!scanner.hasNext()) {
-      throw new IOException("Unable to read issue content from file");
+      throw new ReadabilityException("Unable to read issue content from file");
     }
     final String title = scanner.nextLine();
     final StringBuilder body = new StringBuilder();

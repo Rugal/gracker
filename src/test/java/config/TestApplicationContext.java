@@ -1,12 +1,16 @@
 package config;
 
+import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.util.StringUtil;
 
 import com.google.gson.Gson;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  *
@@ -30,5 +34,25 @@ public class TestApplicationContext {
   @ConditionalOnMissingBean
   public PersonIdent personIdent() {
     return new PersonIdent("Rugal Bernstein", "test@mail.com");
+  }
+
+  @Bean
+  @Scope("prototype")
+  public RawIssue.Content rawContent() {
+    final RawIssue.Content content = new RawIssue.Content();
+    content.setTitle(Mockito.mock(ObjectId.class));
+    content.setBody(Mockito.mock(ObjectId.class));
+    content.setLabel(Mockito.mock(ObjectId.class));
+    return content;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public RawIssue rawIssue(final RawIssue.Content rawContent) {
+    final RawIssue rawIssue = new RawIssue();
+    rawIssue.setContent(rawContent);
+    rawIssue.setCommit(Mockito.mock(ObjectId.class));
+    rawIssue.setTree(Mockito.mock(ObjectId.class));
+    return rawIssue;
   }
 }

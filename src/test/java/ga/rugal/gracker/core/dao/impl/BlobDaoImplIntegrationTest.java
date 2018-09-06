@@ -7,9 +7,11 @@ import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Ignore
 public class BlobDaoImplIntegrationTest extends IntegrationTestBase {
 
   private ObjectId id;

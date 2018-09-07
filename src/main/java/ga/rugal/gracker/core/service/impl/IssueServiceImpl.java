@@ -3,6 +3,7 @@ package ga.rugal.gracker.core.service.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ga.rugal.gracker.core.entity.Issue;
@@ -15,6 +16,7 @@ import ga.rugal.gracker.core.service.TreeService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,9 @@ public class IssueServiceImpl implements IssueService {
   @Autowired
   private ReferenceService referenceService;
 
+  @Autowired
+  private Repository repository;
+
   /**
    * {@inheritDoc}
    */
@@ -56,11 +61,30 @@ public class IssueServiceImpl implements IssueService {
    *
    * @throws IOException unable to read from file system
    */
+  @Override
   public Issue get(final RevCommit commitObject) throws IOException {
     return Issue.builder()
       .commit(this.commitService.read(commitObject))
       .content(this.treeService.read(commitObject.getTree()))
       .build();
+  }
+
+  /**
+   * Get one issue by object id.
+   *
+   * @param id commit object id
+   *
+   * @return assembled issue object
+   *
+   * @throws IOException unable to read from file system
+   */
+  @Override
+  public Optional<Issue> get(final String id) throws IOException {
+    final ObjectId resolve = this.repository.resolve(id);
+
+    return Objects.isNull(resolve)
+           ? Optional.empty()
+           : Optional.of(this.get(this.commitService.getDao().read(resolve)));
   }
 
   private Issue getWithoutException(final ObjectId id) {

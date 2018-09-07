@@ -2,6 +2,8 @@ package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import javax.annotation.Resource;
 
 import config.SystemDefaultProperty;
 
@@ -28,8 +30,11 @@ public class IssueCommand {
   @Autowired
   private IssueService issueService;
 
-  @Autowired
-  private TerminalService terminalService;
+  @Resource(name = "list")
+  private TerminalService ls;
+
+  @Resource(name = "detail")
+  private TerminalService detail;
 
   private boolean useEditor(final String title, final String content) {
     return title.equals(SystemDefaultProperty.NULL)
@@ -83,11 +88,25 @@ public class IssueCommand {
   @ShellMethod("List issues.")
   public String ls() throws IOException {
     final List<Issue> issues = this.issueService.getAllIssue();
-    return this.terminalService.print(issues);
+    return issues.isEmpty()
+           ? "No issue found"
+           : this.ls.print(issues);
   }
 
+  /**
+   * Show detail of an issue.
+   *
+   * @param id any format of issue id
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to read from file system
+   */
   @ShellMethod("Show issue detail.")
-  public int show(final String id) {
-    return 0;
+  public String show(final String id) throws IOException {
+    final Optional<Issue> issue = this.issueService.get(id);
+    return issue.isPresent()
+           ? this.detail.print(issue.get())
+           : "No issue found with specified id";
   }
 }

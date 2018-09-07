@@ -18,18 +18,10 @@ import org.springframework.stereotype.Service;
  *
  * @author Rugal Bernstein
  */
-@Service
-public class TerminalServiceImpl implements TerminalService {
+@Service("list")
+public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
 
   private static final String LINE_TEMPLATE = "| %s | %s | %s | %s | %s |";
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public String print(final String content, final String color) {
-    return String.format("%s%s%s", color, content, TerminalColor.RESET);
-  }
 
   /**
    * {@inheritDoc}

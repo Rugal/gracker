@@ -22,6 +22,10 @@ public interface SystemDefaultProperty {
 
   String ASSIGNEE = "assignee";
 
+  String CREATE = "create";
+
+  String UPDATE = "update";
+
   String ASSIGNER = "assigner";
 
   String STATUS = "status";

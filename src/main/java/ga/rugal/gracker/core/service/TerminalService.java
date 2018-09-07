@@ -1,5 +1,9 @@
 package ga.rugal.gracker.core.service;
 
+import java.util.List;
+
+import ga.rugal.gracker.core.entity.Issue;
+
 /**
  * Interface for terminal service.
  *
@@ -16,4 +20,13 @@ public interface TerminalService {
    * @return the formatted string with color
    */
   String print(String content, String color);
+
+  /**
+   * Print issue in list.
+   *
+   * @param issues list of issue
+   *
+   * @return content to be printed
+   */
+  String print(List<Issue> issues);
 }

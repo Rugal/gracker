@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.lib.ObjectId;
 
 /**
  * Issue entity.
@@ -74,6 +75,11 @@ public class Issue {
       return this;
     }
 
+    public IssueBuilder id(final @NotNull ObjectId id) {
+      this.issue.getCommit().setId(id);
+      return this;
+    }
+
     public Issue build() {
       return this.issue;
     }
@@ -93,6 +99,12 @@ public class Issue {
      * In commit tree.
      */
     private User assignee;
+
+    /**
+     * The issue id.<BR>
+     * In commit tree.
+     */
+    private ObjectId id;
 
     /**
      * In commit message.
@@ -126,8 +138,8 @@ public class Issue {
      */
     public void set(final String key, final String value) {
       try {
-        final Field field = Content.class.getField(key);
-        field.set(this, value);
+        final Field field = Content.class.getDeclaredField(key);
+        field.set(Issue.Content.this, value);
       } catch (final NoSuchFieldException ex) {
         LOG.warn("key [{}] not found", key);
       } catch (final IllegalArgumentException | IllegalAccessException | SecurityException ex) {
@@ -164,6 +176,10 @@ public class Issue {
       this.author = author;
       this.email = email;
     }
-  }
 
+    public User(final String author, final String email, final long time) {
+      this(author, email);
+      this.time = time;
+    }
+  }
 }

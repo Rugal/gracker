@@ -56,14 +56,21 @@ public class CommitServiceImpl implements CommitService {
    * {@inheritDoc}
    */
   @Override
-  public Issue.Commit read(final ObjectId commit) throws IOException {
-    final RevCommit read = this.dao.read(commit);
+  public Issue.Commit read(final ObjectId commitId) throws IOException {
+    final RevCommit commit = this.dao.read(commitId);
+
     return Issue.builder()
-      .assigner(new Issue.User(read.getAuthorIdent().getName(),
-                               read.getAuthorIdent().getEmailAddress()))
-      .assignee(new Issue.User(read.getCommitterIdent().getName(),
-                               read.getCommitterIdent().getEmailAddress()))
-      .status(Status.valueOf(read.getShortMessage()))
+      .assigner(new Issue.User(commit.getAuthorIdent().getName(),
+                               commit.getAuthorIdent().getEmailAddress(),
+                               commit.getAuthorIdent().getWhen().getTime() / 1000))
+      .assignee(new Issue.User(commit.getCommitterIdent().getName(),
+                               commit.getCommitterIdent().getEmailAddress(),
+                               commit.getCommitTime()))
+      .status(Status.valueOf(commit.getShortMessage()))
+      //We use root commit id as issue id so we need to get it.
+      .id(commit.getParentCount() == 0
+          ? commitId
+          : commit.getParent(commit.getParentCount() - 1).getId())
       .build()
       .getCommit();
   }

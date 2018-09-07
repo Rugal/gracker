@@ -1,9 +1,9 @@
 package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
+import java.util.List;
 
 import config.SystemDefaultProperty;
-import config.TerminalColor;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
@@ -77,10 +77,13 @@ public class IssueCommand {
    * List issue as requested.
    *
    * @return the content to be displayed
+   *
+   * @throws IOException unable to read from file system
    */
   @ShellMethod("List issues.")
-  public String ls() {
-    return this.terminalService.print("Rugal Bernstein", TerminalColor.RED_F);
+  public String ls() throws IOException {
+    final List<Issue> issues = this.issueService.getAllIssue();
+    return this.terminalService.print(issues);
   }
 
   @ShellMethod("Show issue detail.")

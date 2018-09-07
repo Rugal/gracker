@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
@@ -22,4 +23,13 @@ public interface IssueService {
    * @throws IOException unable to write to file system
    */
   RawIssue create(Issue issue) throws IOException;
+
+  /**
+   * Get all issues from repository.
+   *
+   * @return list of issue
+   *
+   * @throws IOException unable to read from file system
+   */
+  List<Issue> getAllIssue() throws IOException;
 }

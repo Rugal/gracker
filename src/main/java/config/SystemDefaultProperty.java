@@ -16,5 +16,23 @@ public interface SystemDefaultProperty {
 
   String BODY = "body";
 
+  String ISSUE = "issue";
+
   String REFERENCE = "issue";
+
+  String ASSIGNEE = "assignee";
+
+  String ASSIGNER = "assigner";
+
+  String STATUS = "status";
+
+  int ISSUE_LENGTH = 20;
+
+  int TITLE_LENGTH = 50;
+
+  int ASSIGNEE_LENGTH = 27;
+
+  int ASSIGNER_LENGTH = ASSIGNEE_LENGTH;
+
+  int STATUS_LENGTH = 21;
 }

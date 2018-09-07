@@ -26,5 +26,14 @@ public interface CommitDao {
    */
   ObjectId create(Issue.Commit commit, ObjectId treeId) throws IOException;
 
-  RevCommit read(ObjectId commitId) throws IOException;
+  /**
+   * Read commit object from file system.
+   *
+   * @param commit the commit object
+   *
+   * @return native revision commit object
+   *
+   * @throws IOException unable to read from file system
+   */
+  RevCommit read(ObjectId commit) throws IOException;
 }

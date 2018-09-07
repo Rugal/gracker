@@ -136,5 +136,13 @@ public class Issue {
      * In commit tree.
      */
     private long time = Instant.now().getEpochSecond();
+
+    public User() {
+    }
+
+    public User(final String author, final String email) {
+      this.author = author;
+      this.email = email;
+    }
   }
 }

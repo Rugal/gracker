@@ -61,10 +61,13 @@ public class CommitDaoImpl implements CommitDao {
     return commitId;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public RevCommit read(final ObjectId commitId) throws IOException {
+  public RevCommit read(final ObjectId commit) throws IOException {
     final ObjectReader reader = this.repository.newObjectReader();
-    final ObjectLoader loader = reader.open(commitId);
+    final ObjectLoader loader = reader.open(commit);
     return RevCommit.parse(loader.getBytes());
   }
 }

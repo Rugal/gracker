@@ -3,12 +3,15 @@ package ga.rugal.gracker.core.service.impl;
 import java.io.IOException;
 import java.util.List;
 
+import config.SystemDefaultProperty;
+
 import ga.rugal.gracker.core.dao.BlobDao;
 import ga.rugal.gracker.core.service.BlobService;
 import ga.rugal.gracker.util.StringUtil;
 
 import lombok.Getter;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +60,14 @@ public class BlobServiceImpl implements BlobService {
       sb.append(label.get(i));
     }
     return this.createBlob(sb.toString());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String read(final ObjectId blobId) throws IOException {
+    final ObjectLoader loader = this.dao.read(blobId);
+    return new String(loader.getBytes(), SystemDefaultProperty.ENCODE);
   }
 }

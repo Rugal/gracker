@@ -1,10 +1,12 @@
 package ga.rugal.gracker.core.entity;
 
+import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Issue entity.
@@ -12,6 +14,7 @@ import lombok.Data;
  * @author Rugal Bernstein
  */
 @Data
+@Slf4j
 public class Issue {
 
   public static IssueBuilder builder() {
@@ -114,6 +117,23 @@ public class Issue {
      * Label file.
      */
     private List<String> label;
+
+    /**
+     * Set field by key.
+     *
+     * @param key   field name
+     * @param value content
+     */
+    public void set(final String key, final String value) {
+      try {
+        final Field field = Content.class.getField(key);
+        field.set(this, value);
+      } catch (final NoSuchFieldException ex) {
+        LOG.warn("key [{}] not found", key);
+      } catch (final IllegalArgumentException | IllegalAccessException | SecurityException ex) {
+        LOG.error("Unable to access key [{}]", key);
+      }
+    }
   }
 
   @Data
@@ -145,4 +165,5 @@ public class Issue {
       this.email = email;
     }
   }
+
 }

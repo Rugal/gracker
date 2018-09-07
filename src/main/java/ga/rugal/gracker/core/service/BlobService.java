@@ -26,7 +26,8 @@ public interface BlobService extends ServiceBase<BlobDao> {
   ObjectId body(String body) throws IOException;
 
   /**
-   * Create blob object for label.
+   * Create blob object for label.<BR>
+   * label is stored in CSV format.
    *
    * @param label label array
    *
@@ -46,4 +47,15 @@ public interface BlobService extends ServiceBase<BlobDao> {
    * @throws IOException unable to write to file system
    */
   ObjectId title(String title) throws IOException;
+
+  /**
+   * Read blob into a string, the target object must be blob.
+   *
+   * @param blobId blob object
+   *
+   * @return string typed data
+   *
+   * @throws IOException unable to read from file system
+   */
+  String read(ObjectId blobId) throws IOException;
 }

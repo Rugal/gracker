@@ -49,10 +49,10 @@ public class TreeDaoImpl implements TreeDao {
    * {@inheritDoc}
    */
   @Override
-  public TreeWalk read(final ObjectId blobId) throws IOException {
+  public TreeWalk read(final ObjectId treeId) throws IOException {
     final TreeWalk treeWalk = new TreeWalk(this.repository);
-    treeWalk.addTree(blobId);
-    treeWalk.next();
+    treeWalk.addTree(treeId);
+    treeWalk.setRecursive(false);
     return treeWalk;
   }
 }

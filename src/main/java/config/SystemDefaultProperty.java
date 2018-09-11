@@ -30,6 +30,8 @@ public interface SystemDefaultProperty {
 
   String STATUS = "status";
 
+  String ERROR = "ERROR";
+
   int ISSUE_LENGTH = 20;
 
   int TITLE_LENGTH = 50;

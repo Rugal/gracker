@@ -65,7 +65,7 @@ public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
                          StringUtil.center(this.print(StringUtil
                            .subString(issue.getContent().getTitle(),
                                       SystemDefaultProperty.TITLE_LENGTH),
-                                                      TerminalColor.BLUE_F),
+                                                      TerminalColor.RED_F),
                                            SystemDefaultProperty.TITLE_LENGTH),
                          StringUtil.center(this.print(issue.getCommit().getAssigner().getAuthor(),
                                                       TerminalColor.BLUE_F),

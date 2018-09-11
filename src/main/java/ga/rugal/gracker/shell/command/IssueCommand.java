@@ -13,6 +13,7 @@ import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.TerminalService;
+import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class IssueCommand {
    *
    * @param title issue title
    * @param body  issue body
+   * @param level log level
    *
    * @return Issue creation status
    *
@@ -56,9 +58,10 @@ public class IssueCommand {
    */
   @ShellMethod("Create issue.")
   public String create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
-                       final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body)
+                       final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body,
+                       final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
     throws IOException, InterruptedException {
-
+    LogUtil.setLogLevel(level);
     final Issue issue;
     try {
       final Issue.Content content = this.useEditor(title, body)
@@ -81,12 +84,16 @@ public class IssueCommand {
   /**
    * List issue as requested.
    *
+   * @param level log level
+   *
    * @return the content to be displayed
    *
    * @throws IOException unable to read from file system
    */
   @ShellMethod("List issues.")
-  public String ls() throws IOException {
+  public String ls(final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
+    throws IOException {
+    LogUtil.setLogLevel(level);
     final List<Issue> issues = this.issueService.getAllIssue();
     return issues.isEmpty()
            ? "No issue found"
@@ -96,14 +103,17 @@ public class IssueCommand {
   /**
    * Show detail of an issue.
    *
-   * @param id any format of issue id
+   * @param id    any format of issue id
+   * @param level log level
    *
    * @return the content to be displayed
    *
    * @throws IOException unable to read from file system
    */
   @ShellMethod("Show issue detail.")
-  public String show(final String id) throws IOException {
+  public String show(final String id,
+                     final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
+    throws IOException {
     final Optional<Issue> issue = this.issueService.get(id);
     return issue.isPresent()
            ? this.detail.print(issue.get())

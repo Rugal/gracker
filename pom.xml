@@ -92,7 +92,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
+                    <configLocation>configuration/checkstyle.xml</configLocation>
                     <excludes>**/generated/**,**/dto/**/*</excludes>
                 </configuration>
                 <dependencies>
@@ -132,7 +132,7 @@
                     <xmlOutput>true</xmlOutput>
                     <failOnError>true</failOnError>
                     <skip>false</skip>
-                    <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+                    <excludeFilterFile>configuration/findbugs-exclude.xml</excludeFilterFile>
                 </configuration>
                 <executions>
                     <execution>

@@ -50,11 +50,24 @@ public class CommitDaoImpl implements CommitDao {
    */
   @Override
   public ObjectId create(final Issue.Commit commit, final ObjectId treeId) throws IOException {
+    return this.update(commit, treeId, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ObjectId update(final Issue.Commit commit,
+                         final ObjectId treeId,
+                         final ObjectId parentId) throws IOException {
     final CommitBuilder commitBuilder = new CommitBuilder();
     commitBuilder.setTreeId(treeId);
     commitBuilder.setMessage(commit.getStatus().name());
     commitBuilder.setAuthor(this.getPersonIdent(commit.getAssigner()));
     commitBuilder.setCommitter(this.getPersonIdent(commit.getAssignee()));
+    if (null != parentId) {
+      commitBuilder.setParentId(parentId);
+    }
     final ObjectInserter inserter = this.repository.newObjectInserter();
     final ObjectId commitId = inserter.insert(commitBuilder);
     inserter.flush();

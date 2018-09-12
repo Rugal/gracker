@@ -101,7 +101,7 @@ public class Issue {
     private User assignee;
 
     /**
-     * The issue id.<BR>
+     * The issue id, is also the reference name.<BR>
      * In commit tree.
      */
     private ObjectId id;

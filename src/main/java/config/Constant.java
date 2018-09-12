@@ -36,4 +36,10 @@ public interface Constant {
   String TRACE = "TRACE";
 
   String AVAILABLE_LEVEL = "Available level: TRACE, DEBUG and ERROR";
+
+  String ANY_FORMAT = "Any format of an issue id";
+
+  String NO_ISSUE = "No issue found";
+
+  String NO_ISSUE_FOR_ID = "No issue found with specified id";
 }

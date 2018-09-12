@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
+import ga.rugal.gracker.core.exception.IssueNotFoundException;
 import ga.rugal.gracker.core.service.CommitService;
 import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.ReferenceService;
@@ -45,6 +46,16 @@ public class IssueServiceImpl implements IssueService {
   public RawIssue create(final Issue issue) throws IOException {
     final RawIssue rawIssue = this.commitService.create(issue);
     this.referenceService.create(rawIssue.getCommit().getName(), rawIssue.getCommit());
+    return rawIssue;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RawIssue update(final Issue issue) throws IOException, IssueNotFoundException {
+    final RawIssue rawIssue = this.commitService.update(issue);
+    this.referenceService.create(issue.getCommit().getId().getName(), rawIssue.getCommit());
     return rawIssue;
   }
 

@@ -10,6 +10,7 @@ import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
+import ga.rugal.gracker.core.exception.IssueNotFoundException;
 import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
@@ -101,7 +102,7 @@ public class IssueCommand {
     LogUtil.setLogLevel(level);
     final List<Issue> issues = this.issueService.getAllIssue();
     return issues.isEmpty()
-           ? "No issue found"
+           ? Constant.NO_ISSUE
            : this.ls.print(issues);
   }
 
@@ -116,21 +117,52 @@ public class IssueCommand {
    * @throws IOException unable to read from file system
    */
   @ShellMethod("Show issue detail.")
-  public String show(final @ShellOption(help = "Any format of an issue id") String id,
+  public String show(final @ShellOption(help = Constant.ANY_FORMAT) String id,
                      final @ShellOption(defaultValue = Constant.ERROR,
                                         help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<Issue> issue = this.issueService.get(id);
-    return issue.isPresent()
-           ? this.detail.print(issue.get())
-           : "No issue found with specified id";
+    final Optional<Issue> optional = this.issueService.get(id);
+    return optional.isPresent()
+           ? this.detail.print(optional.get())
+           : Constant.NO_ISSUE_FOR_ID;
   }
 
+  /**
+   * Assign issue to user.
+   *
+   * @param id    issue id
+   * @param name  assignee name
+   * @param email assignee email
+   * @param level log level
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to write to file system
+   */
   @ShellMethod("Assign issue to user.")
-  public void assign(final String name, final String email) {
+  public String assign(final @ShellOption(help = Constant.ANY_FORMAT) String id,
+                       final @ShellOption(help = "Assignee name") String name,
+                       final @ShellOption(help = "Assignee email") String email,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
 
+    LogUtil.setLogLevel(level);
+    final Optional<Issue> optional = this.issueService.get(id);
+    if (!optional.isPresent()) {
+      return Constant.NO_ISSUE_FOR_ID;
+    }
+    final Issue issue = optional.get();
+    issue.getCommit().setAssignee(new Issue.User(name, email));
+    try {
+      this.issueService.update(issue);
+    } catch (final IssueNotFoundException ex) {
+      return Constant.NO_ISSUE_FOR_ID;
+    }
+
+    return String.format("Assign issue [%s] to [%s]", id, name);
   }
 
   @ShellMethod("Update issue label.")

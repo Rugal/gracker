@@ -2,13 +2,16 @@ package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import ga.rugal.gracker.core.dao.CommitDao;
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.core.entity.Status;
+import ga.rugal.gracker.core.exception.IssueNotFoundException;
 import ga.rugal.gracker.core.service.BlobService;
 import ga.rugal.gracker.core.service.CommitService;
+import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.core.service.TreeService;
 
 import lombok.Getter;
@@ -35,19 +38,15 @@ public class CommitServiceImpl implements CommitService {
   @Autowired
   private TreeService treeService;
 
+  @Autowired
+  private ReferenceService referenceService;
+
   /**
    * {@inheritDoc}
    */
   @Override
   public RawIssue create(final Issue issue) throws IOException {
-    final RawIssue rawIssue = new RawIssue();
-    final RawIssue.Content content = new RawIssue.Content();
-    content.setBody(this.blobService.body(issue.getContent().getBody()));
-    content.setTitle(this.blobService.title(issue.getContent().getTitle()));
-    final List<String> label = issue.getContent().getLabel();
-    content.setLabel(label == null ? null : this.blobService.label(label));
-    rawIssue.setContent(content);
-    rawIssue.setTree(this.treeService.getDao().create(content));
+    final RawIssue rawIssue = this.doCreate(issue);
     rawIssue.setCommit(this.dao.create(issue.getCommit(), rawIssue.getTree()));
     return rawIssue;
   }
@@ -73,5 +72,32 @@ public class CommitServiceImpl implements CommitService {
           : commit.getParent(commit.getParentCount() - 1).getId())
       .build()
       .getCommit();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RawIssue update(final Issue issue) throws IOException, IssueNotFoundException {
+    final Optional<ObjectId> optional = this.referenceService.getHead(issue.getCommit().getId());
+    if (!optional.isPresent()) {
+      throw new IssueNotFoundException();
+    }
+    //similar to creation
+    final RawIssue rawIssue = this.doCreate(issue); //the current head
+    rawIssue.setCommit(this.dao.update(issue.getCommit(), rawIssue.getTree(), optional.get()));
+    return rawIssue;
+  }
+
+  private RawIssue doCreate(final Issue issue) throws IOException {
+    final RawIssue rawIssue = new RawIssue();
+    final RawIssue.Content content = new RawIssue.Content();
+    content.setBody(this.blobService.body(issue.getContent().getBody()));
+    content.setTitle(this.blobService.title(issue.getContent().getTitle()));
+    final List<String> label = issue.getContent().getLabel();
+    content.setLabel(label == null ? null : this.blobService.label(label));
+    rawIssue.setContent(content);
+    rawIssue.setTree(this.treeService.getDao().create(content));
+    return rawIssue;
   }
 }

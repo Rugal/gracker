@@ -2,6 +2,7 @@ package ga.rugal.gracker.core.dao;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -46,4 +47,15 @@ public interface ReferenceDao {
    * @throws IOException unable to read from file system
    */
   List<Ref> getAll() throws IOException;
+
+  /**
+   * Get reference by any format of id.
+   *
+   * @param id in any format
+   *
+   * @return optional reference
+   *
+   * @throws IOException unable to read from file system
+   */
+  Optional<Ref> get(String id) throws IOException;
 }

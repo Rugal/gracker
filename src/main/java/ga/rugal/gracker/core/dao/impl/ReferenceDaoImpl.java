@@ -2,6 +2,7 @@ package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import config.Constant;
 
@@ -52,4 +53,17 @@ public class ReferenceDaoImpl implements ReferenceDao {
     final String prefix = String.format("refs/%s", Constant.REFERENCE);
     return this.refDatabase.getRefsByPrefix(prefix);
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<Ref> get(final String id) throws IOException {
+    final String prefix = String.format("refs/%s/%s", Constant.REFERENCE, id);
+    final List<Ref> refs = this.refDatabase.getRefsByPrefix(prefix);
+    return refs.isEmpty()
+           ? Optional.empty()
+           : Optional.of(refs.get(0));
+  }
+
 }

@@ -16,7 +16,6 @@ import ga.rugal.gracker.core.service.TreeService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +38,6 @@ public class IssueServiceImpl implements IssueService {
   @Autowired
   private ReferenceService referenceService;
 
-  @Autowired
-  private Repository repository;
-
   /**
    * {@inheritDoc}
    */
@@ -53,38 +49,39 @@ public class IssueServiceImpl implements IssueService {
   }
 
   /**
-   * Get one issue by object id.
+   * Parse and get commit id into {@code Issue} format.
    *
-   * @param commitObject commit object
+   * @param commitId commit object id
    *
    * @return assembled issue object
    *
    * @throws IOException unable to read from file system
    */
+  private Issue get(final ObjectId commitId) throws IOException {
+    return this.get(this.commitService.getDao().read(commitId));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public Issue get(final RevCommit commitObject) throws IOException {
+  public Issue get(final RevCommit revCommit) throws IOException {
     return Issue.builder()
-      .commit(this.commitService.read(commitObject))
-      .content(this.treeService.read(commitObject.getTree()))
+      .commit(this.commitService.read(revCommit))
+      .content(this.treeService.read(revCommit.getTree()))
       .build();
   }
 
   /**
-   * Get one issue by object id.
-   *
-   * @param id commit object id
-   *
-   * @return assembled issue object
-   *
-   * @throws IOException unable to read from file system
+   * {@inheritDoc}
    */
   @Override
   public Optional<Issue> get(final String id) throws IOException {
-    final ObjectId resolve = this.repository.resolve(id);
+    final Optional<Ref> optional = this.referenceService.getDao().get(id);
 
-    return Objects.isNull(resolve)
-           ? Optional.empty()
-           : Optional.of(this.get(this.commitService.getDao().read(resolve)));
+    return optional.isPresent()
+           ? Optional.of(this.get(optional.get().getObjectId()))
+           : Optional.empty();
   }
 
   private Issue getWithoutException(final ObjectId id) {

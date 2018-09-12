@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ga.rugal.gracker.core.entity.Issue;
-import ga.rugal.gracker.core.entity.RawIssue; 
+import ga.rugal.gracker.core.entity.RawIssue;
 
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -37,9 +37,9 @@ public interface IssueService {
   List<Issue> getAllIssue() throws IOException;
 
   /**
-   * Get one issue by object id.
+   * Get one issue by issue id.
    *
-   * @param id commit object id
+   * @param id issue id
    *
    * @return assembled issue object
    *
@@ -48,13 +48,14 @@ public interface IssueService {
   Optional<Issue> get(String id) throws IOException;
 
   /**
-   * Get one issue by object id.
+   * Get one issue by revision commit object.<BR>
+   * Basically just assemble issue object itself.
    *
-   * @param commitObject commit object
+   * @param revCommit revision commit object
    *
    * @return assembled issue object
    *
    * @throws IOException unable to read from file system
    */
-  Issue get(RevCommit commitObject) throws IOException;
+  Issue get(RevCommit revCommit) throws IOException;
 }

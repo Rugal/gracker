@@ -129,7 +129,7 @@ public class IssueCommand {
   }
 
   @ShellMethod("Assign issue to user.")
-  public void assign() {
+  public void assign(final String name, final String email) {
 
   }
 

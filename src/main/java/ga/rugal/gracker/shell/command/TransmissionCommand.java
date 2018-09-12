@@ -11,7 +11,7 @@ public class TransmissionCommand {
     return a + b;
   }
 
-  @ShellMethod("Download and combine issue in current reference.")
+  @ShellMethod("Download and combine issue into current reference.")
   public int pull() {
     return 0;
   }
@@ -19,5 +19,30 @@ public class TransmissionCommand {
   @ShellMethod("Upload local issue to remote.")
   public int push(final String id) {
     return 0;
+  }
+
+  @ShellMethod("OPEN => IN_PROGRESS")
+  public void start() {
+
+  }
+
+  @ShellMethod("IN_PROGRESS => DONE")
+  public void finish() {
+
+  }
+
+  @ShellMethod("DONE => CLOSE")
+  public void resolve() {
+
+  }
+
+  @ShellMethod("DONE => OPEN")
+  public void rework() {
+
+  }
+
+  @ShellMethod("CLOSE => OPEN")
+  public void reopen() {
+
   }
 }

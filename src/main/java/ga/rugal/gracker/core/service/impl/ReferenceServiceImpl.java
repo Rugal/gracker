@@ -2,7 +2,7 @@ package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
 
-import config.SystemDefaultProperty;
+import config.Constant;
 
 import ga.rugal.gracker.core.dao.ReferenceDao;
 import ga.rugal.gracker.core.service.ReferenceService;
@@ -29,9 +29,6 @@ public class ReferenceServiceImpl implements ReferenceService {
 
   @Override
   public RefUpdate.Result create(final String name, final ObjectId commitId) throws IOException {
-    return this.dao.create(String.format(TEMPLATE,
-                                         SystemDefaultProperty.REFERENCE,
-                                         name),
-                           commitId);
+    return this.dao.create(String.format(TEMPLATE, Constant.REFERENCE, name), commitId);
   }
 }

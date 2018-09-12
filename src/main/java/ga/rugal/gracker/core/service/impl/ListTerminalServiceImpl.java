@@ -3,6 +3,7 @@ package ga.rugal.gracker.core.service.impl;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
+import config.Constant;
 import config.SystemDefaultProperty;
 import config.TerminalColor;
 
@@ -35,23 +36,23 @@ public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
     //issue | title | assignee | assigner | status
     return String.format(LINE_TEMPLATE,
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(SystemDefaultProperty.ISSUE),
+                           .upperCase(Constant.ISSUE),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.ISSUE_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(SystemDefaultProperty.TITLE),
+                           .upperCase(Constant.TITLE),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.TITLE_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(SystemDefaultProperty.ASSIGNEE),
+                           .upperCase(Constant.ASSIGNEE),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.ASSIGNER_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(SystemDefaultProperty.ASSIGNER),
+                           .upperCase(Constant.ASSIGNER),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.ASSIGNEE_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(SystemDefaultProperty.STATUS),
+                           .upperCase(Constant.STATUS),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.STATUS_LENGTH));
   }

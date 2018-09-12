@@ -8,7 +8,7 @@ import java.util.Date;
  *
  * @author Rugal Bernstein
  */
-public class DateUtil {
+public final class DateUtil {
 
   private DateUtil() {
   }

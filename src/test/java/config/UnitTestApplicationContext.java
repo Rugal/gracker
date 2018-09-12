@@ -2,7 +2,8 @@ package config;
 
 import java.util.Random;
 
-import ga.PackageInfo;
+import ga.rugal.PackageInfo;
+
 import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.Repository;
 import org.mockito.Mockito;

@@ -1,5 +1,7 @@
 package ga.rugal.gracker.util;
 
+import config.Constant;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 
@@ -8,9 +10,9 @@ import org.apache.logging.log4j.core.config.Configurator;
  *
  * @author Rugal Bernstein
  */
-public class LogUtil {
+public final class LogUtil {
 
-  private static final String PACKAGE = "ga.rugal";
+  private static final String PACKAGE = ga.rugal.PackageInfo.class.getPackage().getName();
 
   private LogUtil() {
   }
@@ -21,6 +23,13 @@ public class LogUtil {
    * @param level input
    */
   public static void setLogLevel(final String level) {
-    Configurator.setLevel(PACKAGE, Level.getLevel(level));
+    switch (level) {
+      case Constant.TRACE:
+      case Constant.DEBUG:
+        Configurator.setLevel(PACKAGE, Level.getLevel(level));
+        break;
+      default:
+        Configurator.setLevel(PACKAGE, Level.ERROR);
+    }
   }
 }

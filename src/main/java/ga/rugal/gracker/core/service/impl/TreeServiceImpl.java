@@ -3,7 +3,7 @@ package ga.rugal.gracker.core.service.impl;
 import java.io.IOException;
 import java.util.Arrays;
 
-import config.SystemDefaultProperty;
+import config.Constant;
 
 import ga.rugal.gracker.core.dao.TreeDao;
 import ga.rugal.gracker.core.entity.Issue;
@@ -49,7 +49,7 @@ public class TreeServiceImpl implements TreeService {
       final String key = treeWalk.getPathString();
       final String value = this.blobService.read(objectId);
       LOG.trace("Process blob object [{}] key [{}] value [{}]", objectId.getName(), key, value);
-      if (SystemDefaultProperty.LABEL.equals(treeWalk.getPathString())) {
+      if (Constant.LABEL.equals(treeWalk.getPathString())) {
         content.setLabel(Arrays.asList(value.split(",")));
         continue;
       }

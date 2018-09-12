@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Rugal Bernstein
  */
 @Slf4j
-public class StringUtil {
+public final class StringUtil {
 
   private StringUtil() {
   }

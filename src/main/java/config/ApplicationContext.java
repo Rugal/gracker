@@ -24,7 +24,7 @@ import org.springframework.shell.ExitRequest;
  * @author Rugal Bernstein
  * @since 0.2
  */
-@ComponentScan(basePackageClasses = {ga.PackageInfo.class,
+@ComponentScan(basePackageClasses = {ga.rugal.PackageInfo.class,
                                      ga.rugal.gracker.shell.PackageInfo.class})
 @Configuration
 @Slf4j

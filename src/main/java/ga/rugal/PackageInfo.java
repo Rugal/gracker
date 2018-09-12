@@ -1,4 +1,4 @@
-package ga;
+package ga.rugal;
 
 /**
  * For scanning every class.

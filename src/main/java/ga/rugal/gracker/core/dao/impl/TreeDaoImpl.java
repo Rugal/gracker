@@ -2,7 +2,7 @@ package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
 
-import config.SystemDefaultProperty;
+import config.Constant;
 
 import ga.rugal.gracker.core.dao.TreeDao;
 import ga.rugal.gracker.core.entity.RawIssue;
@@ -35,10 +35,10 @@ public class TreeDaoImpl implements TreeDao {
   public ObjectId create(final RawIssue.Content content) throws IOException {
     final ObjectInserter inserter = this.repository.newObjectInserter();
     final TreeFormatter treeFormatter = new TreeFormatter();
-    treeFormatter.append(SystemDefaultProperty.TITLE, FileMode.REGULAR_FILE, content.getTitle());
-    treeFormatter.append(SystemDefaultProperty.BODY, FileMode.REGULAR_FILE, content.getBody());
+    treeFormatter.append(Constant.TITLE, FileMode.REGULAR_FILE, content.getTitle());
+    treeFormatter.append(Constant.BODY, FileMode.REGULAR_FILE, content.getBody());
     if (null != content.getLabel()) {
-      treeFormatter.append(SystemDefaultProperty.LABEL, FileMode.REGULAR_FILE, content.getLabel());
+      treeFormatter.append(Constant.LABEL, FileMode.REGULAR_FILE, content.getLabel());
     }
     final ObjectId treeId = inserter.insert(treeFormatter);
     inserter.flush();

@@ -3,7 +3,7 @@ package ga.rugal.gracker.core.dao.impl;
 import java.io.IOException;
 import java.util.List;
 
-import config.SystemDefaultProperty;
+import config.Constant;
 
 import ga.rugal.gracker.core.dao.ReferenceDao;
 
@@ -49,7 +49,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
    */
   @Override
   public List<Ref> getAll() throws IOException {
-    final String prefix = String.format("refs/%s", SystemDefaultProperty.REFERENCE);
+    final String prefix = String.format("refs/%s", Constant.REFERENCE);
     return this.refDatabase.getRefsByPrefix(prefix);
   }
 }

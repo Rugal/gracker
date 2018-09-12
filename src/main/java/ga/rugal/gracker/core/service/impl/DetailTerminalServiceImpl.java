@@ -1,5 +1,6 @@
 package ga.rugal.gracker.core.service.impl;
 
+import config.Constant;
 import config.SystemDefaultProperty;
 import config.TerminalColor;
 
@@ -44,19 +45,19 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
     return String.format("%s%n%s%n%n%s%n%s%n%n%s%n%n%s%n",
                          this.line1(issue),
                          String.format("%s: %-50s",
-                                       StringUtil.upperCase(SystemDefaultProperty.TITLE),
+                                       StringUtil.upperCase(Constant.TITLE),
                                        issue.getContent().getTitle()),
                          this.author(issue.getCommit().getAssigner(),
-                                     SystemDefaultProperty.ASSIGNER,
-                                     SystemDefaultProperty.CREATE),
+                                     Constant.ASSIGNER,
+                                     Constant.CREATE),
                          this.author(issue.getCommit().getAssignee(),
-                                     SystemDefaultProperty.ASSIGNEE,
-                                     SystemDefaultProperty.UPDATE),
+                                     Constant.ASSIGNEE,
+                                     Constant.UPDATE),
                          String.format("%s: %s",
-                                       StringUtil.upperCase(SystemDefaultProperty.LABEL),
+                                       StringUtil.upperCase(Constant.LABEL),
                                        ""),//Still waiting for the label as line5
                          String.format("%s:%n%s",
-                                       StringUtil.upperCase(SystemDefaultProperty.BODY),
+                                       StringUtil.upperCase(Constant.BODY),
                                        issue.getContent().getBody()));
   }
 
@@ -64,9 +65,9 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
     final String id = issue.getCommit().getId().getName()
       .substring(0, SystemDefaultProperty.ISSUE_NUMBER_LENGTH);
     return String.format("%s: %-20s %s: %-20s",
-                         StringUtil.upperCase(SystemDefaultProperty.ISSUE),
+                         StringUtil.upperCase(Constant.ISSUE),
                          this.print(id, TerminalColor.YELLOW_F),
-                         StringUtil.upperCase(SystemDefaultProperty.STATUS),
+                         StringUtil.upperCase(Constant.STATUS),
                          this.print(issue.getCommit().getStatus().name(), TerminalColor.GREEN_F));
   }
 

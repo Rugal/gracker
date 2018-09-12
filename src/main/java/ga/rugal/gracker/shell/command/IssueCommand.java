@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
 
+import config.Constant;
 import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
@@ -38,8 +39,8 @@ public class IssueCommand {
   private TerminalService detail;
 
   private boolean useEditor(final String title, final String content) {
-    return title.equals(SystemDefaultProperty.NULL)
-           || content.equals(SystemDefaultProperty.NULL);
+    return title.equals(Constant.NULL)
+           || content.equals(Constant.NULL);
   }
 
   /**
@@ -57,10 +58,12 @@ public class IssueCommand {
    * @throws InterruptedException when editor process is interrupted
    */
   @ShellMethod("Create issue.")
-  public String create(final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String title,
-                       final @ShellOption(defaultValue = SystemDefaultProperty.NULL) String body,
-                       final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
+  public String create(final @ShellOption(defaultValue = Constant.NULL) String title,
+                       final @ShellOption(defaultValue = Constant.NULL) String body,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException, InterruptedException {
+
     LogUtil.setLogLevel(level);
     final Issue issue;
     try {
@@ -91,8 +94,10 @@ public class IssueCommand {
    * @throws IOException unable to read from file system
    */
   @ShellMethod("List issues.")
-  public String ls(final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
+  public String ls(final @ShellOption(defaultValue = Constant.ERROR,
+                                      help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException {
+
     LogUtil.setLogLevel(level);
     final List<Issue> issues = this.issueService.getAllIssue();
     return issues.isEmpty()
@@ -111,12 +116,25 @@ public class IssueCommand {
    * @throws IOException unable to read from file system
    */
   @ShellMethod("Show issue detail.")
-  public String show(final String id,
-                     final @ShellOption(defaultValue = SystemDefaultProperty.ERROR) String level)
+  public String show(final @ShellOption(help = "Any format of an issue id") String id,
+                     final @ShellOption(defaultValue = Constant.ERROR,
+                                        help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException {
+
+    LogUtil.setLogLevel(level);
     final Optional<Issue> issue = this.issueService.get(id);
     return issue.isPresent()
            ? this.detail.print(issue.get())
            : "No issue found with specified id";
+  }
+
+  @ShellMethod("Assign issue to user.")
+  public void assign() {
+
+  }
+
+  @ShellMethod("Update issue label.")
+  public void label() {
+
   }
 }

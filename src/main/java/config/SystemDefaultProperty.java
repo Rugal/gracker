@@ -6,31 +6,7 @@ public interface SystemDefaultProperty {
 
   String ENCODE = "UTF-8";
 
-  String NULL = "NULL";
-
   String DEFAULT_EDITOR = "vim";
-
-  String TITLE = "title";
-
-  String LABEL = "label";
-
-  String BODY = "body";
-
-  String ISSUE = "issue";
-
-  String REFERENCE = "issue";
-
-  String ASSIGNEE = "assignee";
-
-  String CREATE = "create";
-
-  String UPDATE = "update";
-
-  String ASSIGNER = "assigner";
-
-  String STATUS = "status";
-
-  String ERROR = "ERROR";
 
   int ISSUE_LENGTH = 20;
 

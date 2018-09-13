@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,6 +55,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public RawIssue update(final Issue issue) throws IOException, IssueNotFoundException {
+    issue.getCommit().getAssignee().setTime(Instant.now().getEpochSecond());
     final RawIssue rawIssue = this.commitService.update(issue);
     this.referenceService.create(issue.getCommit().getId().getName(), rawIssue.getCommit());
     return rawIssue;

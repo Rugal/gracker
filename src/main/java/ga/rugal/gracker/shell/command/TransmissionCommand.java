@@ -58,6 +58,47 @@ public class TransmissionCommand {
 
   }
 
+  /**
+   * Transit status of issue from a status to another one.
+   *
+   * @param id    issue id
+   * @param from  current status
+   * @param to    next status
+   * @param level log level
+   *
+   * @return content to display
+   *
+   * @throws IOException unable to write to file system
+   */
+  private String transit(final String id, final Status from, final Status to, final String level)
+    throws IOException {
+
+    LogUtil.setLogLevel(level);
+    final Optional<String> currentId = this.getCurrentId(id);
+    if (!currentId.isPresent()) {
+      return Constant.NO_ID_ENTER;
+    }
+
+    final Optional<Issue> optional = this.issueService.get(currentId.get());
+    if (!optional.isPresent()) {
+      return Constant.NO_ISSUE_FOR_ID;
+    }
+
+    final Issue issue = optional.get();
+    if (!from.equals(issue.getCommit().getStatus())) {
+      return String.format("Issue status must be %s", from);
+    }
+
+    issue.getCommit().setStatus(to);
+    try {
+      this.issueService.update(issue);
+    } catch (final IssueNotFoundException ex) {
+      return Constant.NO_ISSUE_FOR_ID;
+    }
+
+    return String.format("Issue [%s] status is [%s]", id, to);
+  }
+
   @ShellMethod("Download issue information.")
   public int fetch(final int a, final int b) {
     return a + b;
@@ -90,49 +131,86 @@ public class TransmissionCommand {
                                          help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException {
 
-    LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.getCurrentId(id);
-    if (!currentId.isPresent()) {
-      return Constant.NO_ID_ENTER;
-    }
-
-    final Optional<Issue> optional = this.issueService.get(currentId.get());
-    if (!optional.isPresent()) {
-      return Constant.NO_ISSUE_FOR_ID;
-    }
-
-    final Issue issue = optional.get();
-    if (!Status.OPEN.equals(issue.getCommit().getStatus())) {
-      return String.format("Issue status must be %s", Status.OPEN);
-    }
-
-    issue.getCommit().setStatus(Status.IN_PROGRESS);
-    try {
-      this.issueService.update(issue);
-    } catch (final IssueNotFoundException ex) {
-      return Constant.NO_ISSUE_FOR_ID;
-    }
-
-    return String.format("Start issue [%s]", id);
+    return this.transit(id, Status.OPEN, Status.IN_PROGRESS, level);
   }
 
+  /**
+   * Transit from IN_PROGRESS to DONE.
+   *
+   * @param id    issue id
+   * @param level log level
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to write to file system
+   */
   @ShellMethod("IN_PROGRESS => DONE")
-  public void finish() {
+  public String finish(final @ShellOption(defaultValue = Constant.NULL,
+                                          help = Constant.ANY_FORMAT) String id,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
 
+    return this.transit(id, Status.IN_PROGRESS, Status.DONE, level);
   }
 
+  /**
+   * Transit from DONE to CLOSE.
+   *
+   * @param id    issue id
+   * @param level log level
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to write to file system
+   */
   @ShellMethod("DONE => CLOSE")
-  public void resolve() {
+  public String resolve(final @ShellOption(defaultValue = Constant.NULL,
+                                           help = Constant.ANY_FORMAT) String id,
+                        final @ShellOption(defaultValue = Constant.ERROR,
+                                           help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
 
+    return this.transit(id, Status.DONE, Status.CLOSE, level);
   }
 
+  /**
+   * Transit from DONE to OPEN.
+   *
+   * @param id    issue id
+   * @param level log level
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to write to file system
+   */
   @ShellMethod("DONE => OPEN")
-  public void rework() {
+  public String rework(final @ShellOption(defaultValue = Constant.NULL,
+                                          help = Constant.ANY_FORMAT) String id,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
 
+    return this.transit(id, Status.DONE, Status.OPEN, level);
   }
 
+  /**
+   * Transit from CLOSE to OPEN.
+   *
+   * @param id    issue id
+   * @param level log level
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to write to file system
+   */
   @ShellMethod("CLOSE => OPEN")
-  public void reopen() {
+  public String reopen(final @ShellOption(defaultValue = Constant.NULL,
+                                          help = Constant.ANY_FORMAT) String id,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
 
+    return this.transit(id, Status.CLOSE, Status.OPEN, level);
   }
 }

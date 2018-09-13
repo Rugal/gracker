@@ -51,6 +51,9 @@ public class TreeServiceImpl implements TreeService {
       LOG.trace("Process blob object [{}] key [{}] value [{}]", objectId.getName(), key, value);
       if (Constant.LABEL.equals(treeWalk.getPathString())) {
         content.setLabel(Arrays.asList(value.split(",")));
+        LOG.trace("Process blob object [{}] with {} label(s)",
+                  objectId.getName(),
+                  content.getLabel().size());
         continue;
       }
       //Set non-label content

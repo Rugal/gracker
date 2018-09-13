@@ -24,11 +24,11 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
   /**
    * Print issue detail in following format.<BR>
    * <BR>
-   * id: XXX status: XXX<BR>
-   * title: XXX<BR>
+   * id: id of issue status: issue status<BR>
+   * title: issue title<BR>
    * <BR>
-   * author: XXX createdAt: XXX<BR>
-   * committer: XXX updatedAT: XXX<BR>
+   * author: author name createdAt: creation time<BR>
+   * committer: committer name updatedAT: updation time<BR>
    * <BR>
    * label: X, X, X, X<BR>
    * <BR>
@@ -55,7 +55,8 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
                                      Constant.UPDATE),
                          String.format("%s: %s",
                                        StringUtil.upperCase(Constant.LABEL),
-                                       ""),//Still waiting for the label as line5
+                                       this.print(String.join(",", issue.getContent().getLabel()),
+                                                  TerminalColor.CYAN_F)),
                          String.format("%s:%n%s",
                                        StringUtil.upperCase(Constant.BODY),
                                        issue.getContent().getBody()));

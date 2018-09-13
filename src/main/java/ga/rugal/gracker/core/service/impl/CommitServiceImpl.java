@@ -15,6 +15,7 @@ import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.core.service.TreeService;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
  * @author Rugal Bernstein
  */
 @Service
+@Slf4j
 public class CommitServiceImpl implements CommitService {
 
   @Autowired
@@ -67,9 +69,7 @@ public class CommitServiceImpl implements CommitService {
                                commit.getCommitTime()))
       .status(Status.valueOf(commit.getShortMessage()))
       //We use root commit id as issue id so we need to get it.
-      .id(commit.getParentCount() == 0
-          ? commitId
-          : commit.getParent(commit.getParentCount() - 1).getId())
+      .id(this.getRoot(commit))
       .build()
       .getCommit();
   }
@@ -87,6 +87,25 @@ public class CommitServiceImpl implements CommitService {
     final RawIssue rawIssue = this.doCreate(issue); //the current head
     rawIssue.setCommit(this.dao.update(issue.getCommit(), rawIssue.getTree(), optional.get()));
     return rawIssue;
+  }
+
+  /**
+   * Follow the first parent to traverse back to the very first commit, so as to find the reference
+   * id.
+   *
+   * @param head current object id
+   *
+   * @return it is a revision commit object, also, its SHA-1 code is the reference name
+   *
+   * @throws IOException unable to read from file system
+   */
+  private RevCommit getRoot(final RevCommit head) throws IOException {
+    RevCommit commit;
+    for (commit = head;
+         commit.getParents() != null && commit.getParentCount() > 0;
+         commit = commit.getParent(0)) {
+    }
+    return commit;
   }
 
   private RawIssue doCreate(final Issue issue) throws IOException {

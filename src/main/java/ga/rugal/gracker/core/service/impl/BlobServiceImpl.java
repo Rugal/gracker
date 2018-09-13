@@ -52,14 +52,7 @@ public class BlobServiceImpl implements BlobService {
    */
   @Override
   public ObjectId label(final List<String> label) throws IOException {
-    final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < label.size(); i++) {
-      if (0 != i) {
-        sb.append(",");
-      }
-      sb.append(label.get(i));
-    }
-    return this.createBlob(sb.toString());
+    return this.createBlob(String.join(",", label));
   }
 
   /**

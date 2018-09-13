@@ -77,6 +77,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public Issue get(final RevCommit revCommit) throws IOException {
+    LOG.trace("Assemble issue from commit [{}]", revCommit.getName());
     return Issue.builder()
       .commit(this.commitService.read(revCommit))
       .content(this.treeService.read(revCommit.getTree()))
@@ -89,7 +90,6 @@ public class IssueServiceImpl implements IssueService {
   @Override
   public Optional<Issue> get(final String id) throws IOException {
     final Optional<Ref> optional = this.referenceService.getDao().get(id);
-
     return optional.isPresent()
            ? Optional.of(this.get(optional.get().getObjectId()))
            : Optional.empty();
@@ -114,7 +114,7 @@ public class IssueServiceImpl implements IssueService {
     return all.stream()
       .map(Ref::getObjectId)
       .filter(Objects::nonNull)
-      .map(id -> this.getWithoutException(id))
+      .map(id -> this.getWithoutException(id))//this is reference
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }

@@ -1,4 +1,4 @@
-package ga.rugal.gracker.shell.provider;
+package ga.rugal.gracker.shell.provider.event;
 
 import lombok.Getter;
 import org.eclipse.jgit.lib.ObjectId;

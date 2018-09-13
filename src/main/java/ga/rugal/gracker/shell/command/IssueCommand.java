@@ -15,10 +15,12 @@ import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.TerminalService;
+import ga.rugal.gracker.shell.provider.IssueEvent;
 import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -39,9 +41,33 @@ public class IssueCommand {
   @Resource(name = "detail")
   private TerminalService detail;
 
+  @Autowired
+  private ApplicationEventPublisher applicationEventPublisher;
+
   private boolean useEditor(final String title, final String content) {
     return title.equals(Constant.NULL)
            || content.equals(Constant.NULL);
+  }
+
+  /**
+   * Use an issue as current editing one, so the subsequent operations will be done against this
+   * issue.
+   *
+   * @param id issue id
+   *
+   * @return the content to be displayed
+   *
+   * @throws IOException unable to read from file system
+   */
+  @ShellMethod("Use issue.")
+  public String use(final @ShellOption(help = Constant.ANY_FORMAT) String id) throws IOException {
+    final Optional<Issue> optional = this.issueService.get(id);
+    if (!optional.isPresent()) {
+      return Constant.NO_ISSUE_FOR_ID;
+    }
+    final IssueEvent event = new IssueEvent(this, optional.get().getCommit().getId());
+    this.applicationEventPublisher.publishEvent(event);
+    return "DONE";
   }
 
   /**
@@ -166,7 +192,11 @@ public class IssueCommand {
   }
 
   @ShellMethod("Update issue label.")
-  public void label() {
-
+  public int label(final @ShellOption(help = Constant.ANY_FORMAT) String id,
+                   final @ShellOption(arity = 5, help = "Maximum 5 labels") List<String> labels,
+                   final @ShellOption(defaultValue = Constant.ERROR,
+                                      help = Constant.AVAILABLE_LEVEL) String level) {
+    labels.stream().forEach(System.out::println);
+    return labels.size();
   }
 }

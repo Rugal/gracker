@@ -2,6 +2,7 @@ package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import ga.rugal.gracker.core.dao.CommitDao;
@@ -59,6 +60,10 @@ public class CommitServiceImpl implements CommitService {
   @Override
   public Issue.Commit read(final ObjectId commitId) throws IOException {
     final RevCommit commit = this.dao.read(commitId);
+    final RevCommit root = this.getRoot(commit);
+    if (Objects.nonNull(root)) {
+      LOG.debug("Commit [{}] is under issue [{}]", commitId.getName(), root.getName());
+    }
 
     return Issue.builder()
       .assigner(new Issue.User(commit.getAuthorIdent().getName(),
@@ -69,7 +74,7 @@ public class CommitServiceImpl implements CommitService {
                                commit.getCommitTime()))
       .status(Status.valueOf(commit.getShortMessage()))
       //We use root commit id as issue id so we need to get it.
-      .id(this.getRoot(commit))
+      .id(root)
       .build()
       .getCommit();
   }
@@ -101,10 +106,11 @@ public class CommitServiceImpl implements CommitService {
    */
   private RevCommit getRoot(final RevCommit head) throws IOException {
     RevCommit commit;
-    for (commit = head;
-         commit.getParents() != null && commit.getParentCount() > 0;
-         commit = commit.getParent(0)) {
+    for (commit = head; commit.getParents() != null && commit.getParentCount() > 0;) {
+      LOG.trace("Traverse at {}", commit.getName());
+      commit = this.dao.read(commit.getParent(0));
     }
+    LOG.trace("Traverse {} back to the very first commit {}", head.getName(), commit.getName());
     return commit;
   }
 

@@ -2,6 +2,7 @@ package ga.rugal.gracker.core.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -87,7 +88,30 @@ public class EditorServiceImpl implements EditorService {
   public List<String> createIssueLabel() throws InterruptedException,
                                                 ReadabilityException,
                                                 IOException {
+
+    return this.updateIssueLabel(null);
+  }
+
+  /**
+   * Open editor to update issue content.
+   *
+   * @param label existing label
+   *
+   * @return new label list
+   *
+   * @throws IOException          when unable to access file
+   * @throws ReadabilityException when unable to read from file
+   * @throws InterruptedException when editor process is interrupted
+   */
+  @Override
+  public List<String> updateIssueLabel(final List<String> label) throws InterruptedException,
+                                                                        ReadabilityException,
+                                                                        IOException {
     final File tempFile = File.createTempFile("gracker_", ".tmp");
+    if (null != label) {
+      LOG.trace("Write template to temporary file");
+      this.writeTemplate(tempFile, String.join(",", label));
+    }
     this.openFile(tempFile);
     try (Scanner scanner = new Scanner(tempFile, SystemDefaultProperty.ENCODE)) {
       if (!scanner.hasNext()) {
@@ -97,6 +121,12 @@ public class EditorServiceImpl implements EditorService {
         .map(String::trim)
         .filter(s -> !s.isEmpty())
         .collect(Collectors.toList());
+    }
+  }
+
+  private void writeTemplate(final File tempFile, final String content) throws IOException {
+    try (PrintWriter writer = new PrintWriter(tempFile, SystemDefaultProperty.ENCODE)) {
+      writer.print(content);
     }
   }
 

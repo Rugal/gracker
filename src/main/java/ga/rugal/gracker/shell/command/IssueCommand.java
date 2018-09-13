@@ -1,6 +1,7 @@
 package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.TerminalService;
 import ga.rugal.gracker.shell.provider.IssueBasedPromptProvider;
 import ga.rugal.gracker.shell.provider.event.IssueEvent;
+import ga.rugal.gracker.util.CollectionUtil;
 import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,11 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+/**
+ * Issue content related commands.
+ *
+ * @author Rugal Bernstein
+ */
 @ShellComponent
 @Slf4j
 public class IssueCommand {
@@ -82,14 +89,20 @@ public class IssueCommand {
    * Use an issue as current editing one, so the subsequent operations will be done against this
    * issue.
    *
-   * @param id issue id
+   * @param id    issue id
+   * @param level log level
    *
    * @return the content to be displayed
    *
    * @throws IOException unable to read from file system
    */
   @ShellMethod("Use issue.")
-  public String use(final @ShellOption(help = Constant.ANY_FORMAT) String id) throws IOException {
+  public String use(final @ShellOption(help = Constant.ANY_FORMAT) String id,
+                    final @ShellOption(defaultValue = Constant.ERROR,
+                                       help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
+
+    LogUtil.setLogLevel(level);
     final Optional<Issue> optional = this.issueService.get(id);
     if (!optional.isPresent()) {
       return Constant.NO_ISSUE_FOR_ID;
@@ -262,21 +275,24 @@ public class IssueCommand {
       return Constant.NO_ISSUE_FOR_ID;
     }
 
+    final Issue issue = optional.get();
     final List<String> labels;
     try {
-      labels = this.editorService.createIssueLabel();
+      labels = this.editorService.updateIssueLabel(issue.getContent().getLabel());
+      Collections.sort(labels);
     } catch (final ReadabilityException e) {
       return e.getMessage();
     }
 
-    //let's first do label override only
-    //TODO but we need to allow label edition later
-    final Issue issue = optional.get();
     LOG.trace("Issue [{}] use to have {} label(s)",
               issue.getCommit().getId().getName(),
               issue.getContent().getLabel() == null
               ? 0
               : issue.getContent().getLabel().size());
+
+    if (CollectionUtil.equals(labels, issue.getContent().getLabel())) {
+      return "No label change detected";
+    }
 
     issue.getContent().setLabel(labels);
     try {

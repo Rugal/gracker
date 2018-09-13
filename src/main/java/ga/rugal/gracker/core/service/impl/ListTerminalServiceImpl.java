@@ -44,11 +44,11 @@ public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.TITLE_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(Constant.ASSIGNEE),
+                           .upperCase(Constant.ASSIGNER),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.ASSIGNER_LENGTH),
                          StringUtil.center(this.print(StringUtil
-                           .upperCase(Constant.ASSIGNER),
+                           .upperCase(Constant.ASSIGNEE),
                                                       TerminalColor.WHITE_F),
                                            SystemDefaultProperty.ASSIGNEE_LENGTH),
                          StringUtil.center(this.print(StringUtil

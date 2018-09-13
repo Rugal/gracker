@@ -1,5 +1,7 @@
 package ga.rugal.gracker.core.service.impl;
 
+import java.util.Objects;
+
 import config.Constant;
 import config.SystemDefaultProperty;
 import config.TerminalColor;
@@ -53,13 +55,20 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
                          this.author(issue.getCommit().getAssignee(),
                                      Constant.ASSIGNEE,
                                      Constant.UPDATE),
-                         String.format("%s: %s",
-                                       StringUtil.upperCase(Constant.LABEL),
-                                       this.print(String.join(",", issue.getContent().getLabel()),
-                                                  TerminalColor.CYAN_F)),
+                         this.label(issue),
                          String.format("%s:%n%s",
                                        StringUtil.upperCase(Constant.BODY),
                                        issue.getContent().getBody()));
+  }
+
+  private String label(final Issue issue) {
+
+    return String.format("%s: %s",
+                         StringUtil.upperCase(Constant.LABEL),
+                         Objects.isNull(issue.getContent().getLabel())
+                         ? "NONE"
+                         : this.print(String.join(",", issue.getContent().getLabel()),
+                                      TerminalColor.CYAN_F));
   }
 
   private String line1(final Issue issue) {

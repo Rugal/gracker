@@ -46,4 +46,19 @@ public interface EditorService {
   List<String> createIssueLabel() throws InterruptedException,
                                          ReadabilityException,
                                          IOException;
+
+  /**
+   * Open editor to update issue content.
+   *
+   * @param label existing label
+   *
+   * @return new label list
+   *
+   * @throws IOException          when unable to access file
+   * @throws ReadabilityException when unable to read from file
+   * @throws InterruptedException when editor process is interrupted
+   */
+  List<String> updateIssueLabel(List<String> label) throws InterruptedException,
+                                                           ReadabilityException,
+                                                           IOException;
 }

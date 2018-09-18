@@ -120,6 +120,7 @@ public class EditorServiceImpl implements EditorService {
       return Arrays.asList(scanner.nextLine().split(",")).stream()
         .map(String::trim)
         .filter(s -> !s.isEmpty())
+        .distinct()
         .collect(Collectors.toList());
     }
   }

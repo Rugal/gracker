@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -120,7 +121,10 @@ public class CommitServiceImpl implements CommitService {
     content.setBody(this.blobService.body(issue.getContent().getBody()));
     content.setTitle(this.blobService.title(issue.getContent().getTitle()));
     final List<String> label = issue.getContent().getLabel();
-    content.setLabel(label == null ? null : this.blobService.label(label));
+    if (null == label) {
+      Collections.sort(label);
+      content.setLabel(this.blobService.label(label));
+    }
     rawIssue.setContent(content);
     rawIssue.setTree(this.treeService.getDao().create(content));
     return rawIssue;

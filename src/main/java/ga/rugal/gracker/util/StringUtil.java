@@ -50,6 +50,17 @@ public final class StringUtil {
   }
 
   /**
+   * String to lower case with locale handled.
+   *
+   * @param s input string
+   *
+   * @return upper cased string
+   */
+  public static String lowerCase(final String s) {
+    return s.toLowerCase(Locale.CANADA);
+  }
+
+  /**
    * Center a string.
    *
    * @param s    target string

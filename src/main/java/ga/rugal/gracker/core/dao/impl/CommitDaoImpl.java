@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
+import java.util.Date;
 
 import ga.rugal.gracker.core.dao.CommitDao;
 import ga.rugal.gracker.core.entity.Issue;
@@ -42,7 +43,8 @@ public class CommitDaoImpl implements CommitDao {
   private PersonIdent getPersonIdent(final Issue.User user) {
     return (null == user)
            ? this.personIdent
-           : new PersonIdent(user.getAuthor(), user.getEmail());
+           : new PersonIdent(new PersonIdent(user.getAuthor(), user.getEmail()),
+                             new Date(user.getTime() * 1000));
   }
 
   /**

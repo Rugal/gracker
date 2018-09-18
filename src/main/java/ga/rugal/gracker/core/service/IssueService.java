@@ -71,4 +71,17 @@ public interface IssueService {
    * @throws IOException unable to read from file system
    */
   Issue get(RevCommit revCommit) throws IOException;
+
+  /**
+   * Use this method to choose whether use the id that input just now from command line or use the
+   * one that store in the prompt provider.<BR>
+   * 1. Use commandLineId if it exists<BR>
+   * 2. Use prompt id if it exists<BR>
+   * 3. Return empty object else
+   *
+   * @param commandLineId the id get just from command line
+   *
+   * @return final id
+   */
+  Optional<String> getCurrentId(String commandLineId);
 }

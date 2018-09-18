@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import config.Constant;
+
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.core.exception.IssueNotFoundException;
@@ -14,6 +16,7 @@ import ga.rugal.gracker.core.service.CommitService;
 import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.core.service.TreeService;
+import ga.rugal.gracker.shell.provider.IssueBasedPromptProvider;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
@@ -39,6 +42,9 @@ public class IssueServiceImpl implements IssueService {
 
   @Autowired
   private ReferenceService referenceService;
+
+  @Autowired
+  private IssueBasedPromptProvider issueBasedPromptProvider;
 
   /**
    * {@inheritDoc}
@@ -119,5 +125,19 @@ public class IssueServiceImpl implements IssueService {
       .map(id -> this.getWithoutException(id))//this is reference
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<String> getCurrentId(final String commandLineId) {
+    if (!Constant.NULL.equals(commandLineId)) {
+      return Optional.of(commandLineId);
+    }
+    final ObjectId objectId = this.issueBasedPromptProvider.getId();
+    return Objects.isNull(objectId)
+           ? Optional.empty()
+           : Optional.of(objectId.getName());
   }
 }

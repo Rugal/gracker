@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="ERROR">
     <Properties>
-        <Property name="filename">target/app.log</Property>
+        <Property name="filename">.git-issue.log</Property>
     </Properties>
     <Appenders>
         <Console name="STDOUT">

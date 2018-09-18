@@ -52,7 +52,7 @@ public class BlobServiceImpl implements BlobService {
    */
   @Override
   public ObjectId label(final List<String> label) throws IOException {
-    return this.createBlob(String.join(",", label));
+    return this.createBlob(StringUtil.lowerCase(String.join(",", label)));
   }
 
   /**

@@ -1,7 +1,6 @@
 package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 import config.Constant;
@@ -10,11 +9,9 @@ import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.Status;
 import ga.rugal.gracker.core.exception.IssueNotFoundException;
 import ga.rugal.gracker.core.service.IssueService;
-import ga.rugal.gracker.shell.provider.IssueBasedPromptProvider;
 import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.lib.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -30,33 +27,7 @@ import org.springframework.shell.standard.ShellOption;
 public class TransmissionCommand {
 
   @Autowired
-  private IssueBasedPromptProvider issueBasedPromptProvider;
-
-  @Autowired
   private IssueService issueService;
-
-  /**
-   * Use this method to choose whether use the id that input just now from command line or use the
-   * one that store in the prompt provider.<BR>
-   * 1. Use commandLineId if it exists<BR>
-   * 2. Use prompt id if it exists<BR>
-   * 3. Return empty object else
-   *
-   * @param commandLineId the id get just from command line
-   *
-   * @return final id
-   */
-  private Optional<String> getCurrentId(final String commandLineId) {
-    if (!Constant.NULL.equals(commandLineId)) {
-      LOG.trace("");
-      return Optional.of(commandLineId);
-    }
-    final ObjectId objectId = this.issueBasedPromptProvider.getId();
-    return Objects.isNull(objectId)
-           ? Optional.empty()
-           : Optional.of(objectId.getName());
-
-  }
 
   /**
    * Transit status of issue from a status to another one.
@@ -74,7 +45,7 @@ public class TransmissionCommand {
     throws IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.getCurrentId(id);
+    final Optional<String> currentId = this.issueService.getCurrentId(id);
     if (!currentId.isPresent()) {
       return Constant.NO_ID_ENTER;
     }

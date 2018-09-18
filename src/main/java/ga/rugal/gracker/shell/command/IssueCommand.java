@@ -3,7 +3,6 @@ package ga.rugal.gracker.shell.command;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
 
@@ -17,13 +16,11 @@ import ga.rugal.gracker.core.exception.ReadabilityException;
 import ga.rugal.gracker.core.service.EditorService;
 import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.TerminalService;
-import ga.rugal.gracker.shell.provider.IssueBasedPromptProvider;
 import ga.rugal.gracker.shell.provider.event.IssueEvent;
 import ga.rugal.gracker.util.CollectionUtil;
 import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.lib.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.shell.standard.ShellComponent;
@@ -38,9 +35,6 @@ import org.springframework.shell.standard.ShellOption;
 @ShellComponent
 @Slf4j
 public class IssueCommand {
-
-  @Autowired
-  private IssueBasedPromptProvider issueBasedPromptProvider;
 
   @Autowired
   private EditorService editorService;
@@ -60,29 +54,6 @@ public class IssueCommand {
   private boolean useEditor(final String title, final String content) {
     return title.equals(Constant.NULL)
            || content.equals(Constant.NULL);
-  }
-
-  /**
-   * Use this method to choose whether use the id that input just now from command line or use the
-   * one that store in the prompt provider.<BR>
-   * 1. Use commandLineId if it exists<BR>
-   * 2. Use prompt id if it exists<BR>
-   * 3. Return empty object else
-   *
-   * @param commandLineId the id get just from command line
-   *
-   * @return final id
-   */
-  private Optional<String> getCurrentId(final String commandLineId) {
-    if (!Constant.NULL.equals(commandLineId)) {
-      LOG.trace("");
-      return Optional.of(commandLineId);
-    }
-    final ObjectId objectId = this.issueBasedPromptProvider.getId();
-    return Objects.isNull(objectId)
-           ? Optional.empty()
-           : Optional.of(objectId.getName());
-
   }
 
   /**
@@ -193,7 +164,7 @@ public class IssueCommand {
     throws IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.getCurrentId(id);
+    final Optional<String> currentId = this.issueService.getCurrentId(id);
     if (!currentId.isPresent()) {
       return Constant.NO_ID_ENTER;
     }
@@ -226,7 +197,7 @@ public class IssueCommand {
     throws IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.getCurrentId(id);
+    final Optional<String> currentId = this.issueService.getCurrentId(id);
     if (!currentId.isPresent()) {
       return Constant.NO_ID_ENTER;
     }
@@ -265,7 +236,7 @@ public class IssueCommand {
     throws InterruptedException, IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.getCurrentId(id);
+    final Optional<String> currentId = this.issueService.getCurrentId(id);
     if (!currentId.isPresent()) {
       return Constant.NO_ID_ENTER;
     }

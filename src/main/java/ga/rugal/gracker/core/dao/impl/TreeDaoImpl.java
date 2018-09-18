@@ -35,11 +35,12 @@ public class TreeDaoImpl implements TreeDao {
   public ObjectId create(final RawIssue.Content content) throws IOException {
     final ObjectInserter inserter = this.repository.newObjectInserter();
     final TreeFormatter treeFormatter = new TreeFormatter();
-    treeFormatter.append(Constant.TITLE, FileMode.REGULAR_FILE, content.getTitle());
+    //Must follow alphabetic order, otherwise git fsck will fail
     treeFormatter.append(Constant.BODY, FileMode.REGULAR_FILE, content.getBody());
     if (null != content.getLabel()) {
       treeFormatter.append(Constant.LABEL, FileMode.REGULAR_FILE, content.getLabel());
     }
+    treeFormatter.append(Constant.TITLE, FileMode.REGULAR_FILE, content.getTitle());
     final ObjectId treeId = inserter.insert(treeFormatter);
     inserter.flush();
     return treeId;

@@ -44,4 +44,6 @@ public interface Constant {
   String NO_ISSUE_FOR_ID = "No issue found with specified id";
 
   String NO_ID_ENTER = "Please enter id by either setting --id parameter or calling <use> command";
+
+  String REMOTE_REPOSITORY = "The remote repository";
 }

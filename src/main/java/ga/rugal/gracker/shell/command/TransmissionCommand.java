@@ -1,17 +1,21 @@
 package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import config.Constant;
+import config.SystemDefaultProperty;
 
-import ga.rugal.gracker.core.entity.Issue;
-import ga.rugal.gracker.core.entity.Status;
-import ga.rugal.gracker.core.exception.IssueNotFoundException;
-import ga.rugal.gracker.core.service.IssueService;
+import ga.rugal.gracker.core.service.ConfigurationService;
 import ga.rugal.gracker.util.LogUtil;
 
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.api.FetchCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.transport.FetchResult;
+import org.eclipse.jgit.transport.RefSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -27,52 +31,98 @@ import org.springframework.shell.standard.ShellOption;
 public class TransmissionCommand {
 
   @Autowired
-  private IssueService issueService;
+  private ConfigurationService configurationService;
+
+  @Autowired
+  private Git git;
 
   /**
-   * Transit status of issue from a status to another one.
+   * Fulfill reference specification.
    *
-   * @param id    issue id
-   * @param from  current status
-   * @param to    next status
-   * @param level log level
+   * @param remote current remote name
+   *
+   * @return formatted reference specification
+   */
+  private RefSpec getRefSpec(final String remote) {
+    return new RefSpec()
+      .setSourceDestination(String.format("refs/%s/*", Constant.REFERENCE),
+                            String.format("refs/remotes/%s/%s/*", remote, Constant.REFERENCE));
+  }
+
+  /**
+   * Actually fetch object from remote.
+   *
+   * @param fetch the fetch command object
+   *
+   * @return Result of fetch
+   *
+   * @throws GitAPIException Unable to call Git API
+   */
+  private FetchResult doFetch(final FetchCommand fetch) throws GitAPIException {
+    LOG.trace("Listing branches before fetching:");
+    this.git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().stream()
+      .forEach(r -> LOG.trace("Branch {}", r.getName()));
+
+    final FetchResult result = fetch.call();
+
+    LOG.trace("Listing branches after fetching:");
+    this.git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().stream()
+      .forEach(r -> LOG.trace("Branch {}", r.getName()));
+
+    return result;
+  }
+
+  /**
+   * Download git object from remote repository and save it under local remote reference.
+   *
+   * @param remote remote repository name or URL
+   * @param force  enable force update
+   * @param prune  prune deleted reference
+   * @param level  log level
    *
    * @return content to display
    *
    * @throws IOException unable to write to file system
    */
-  private String transit(final String id, final Status from, final Status to, final String level)
+  @ShellMethod("Download issue information.")
+  public String fetch(final @ShellOption(defaultValue = SystemDefaultProperty.DEFAULT_REMOTE,
+                                         help = Constant.REMOTE_REPOSITORY) String remote,
+                      final @ShellOption(defaultValue = "false") boolean force,
+                      final @ShellOption(defaultValue = "false") boolean prune,
+                      final @ShellOption(defaultValue = Constant.ERROR,
+                                         help = Constant.AVAILABLE_LEVEL) String level)
     throws IOException {
 
     LogUtil.setLogLevel(level);
-    final Optional<String> currentId = this.issueService.getCurrentId(id);
-    if (!currentId.isPresent()) {
-      return Constant.NO_ID_ENTER;
-    }
 
-    final Optional<Issue> optional = this.issueService.get(currentId.get());
-    if (!optional.isPresent()) {
-      return Constant.NO_ISSUE_FOR_ID;
-    }
+    final FetchCommand fetch = this.git.fetch()
+      .setRemote(remote)
+      .setRefSpecs(this.getRefSpec(remote))
+      .setCheckFetchedObjects(true)
+      .setForceUpdate(force)
+      .setRemoveDeletedRefs(prune);
 
-    final Issue issue = optional.get();
-    if (!from.equals(issue.getCommit().getStatus())) {
-      return String.format("Issue status must be %s", from);
-    }
-
-    issue.getCommit().setStatus(to);
+    FetchResult result;
     try {
-      this.issueService.update(issue);
-    } catch (final IssueNotFoundException ex) {
-      return Constant.NO_ISSUE_FOR_ID;
+      LOG.debug("Fetch object from {} {}", fetch.getRemote(), fetch.getRefSpecs().get(0));
+      result = this.doFetch(fetch);
+    } catch (final TransportException e) {
+      try {
+        LOG.warn("Ssl certification error, try again with HTTP instead");
+        this.configurationService.setSslVerify(true);
+
+        LOG.debug("Fetch object from {} {} by HTTP", fetch.getRemote(), fetch.getRefSpecs().get(0));
+        result = this.doFetch(fetch);
+      } catch (final GitAPIException ex) {
+        LOG.error("Unable to download object from remote even using HTTP", ex);
+        return ex.getMessage();
+      }
+    } catch (final GitAPIException ex) {
+      LOG.error("Unable to download object from remote", ex);
+      return ex.getMessage();
     }
-
-    return String.format("Issue [%s] status is [%s]", id, to);
-  }
-
-  @ShellMethod("Download issue information.")
-  public int fetch(final int a, final int b) {
-    return a + b;
+    LOG.trace("Fetch complete");
+    return result.getMessages();
   }
 
   @ShellMethod("Download and combine issue into current reference.")
@@ -83,105 +133,5 @@ public class TransmissionCommand {
   @ShellMethod("Upload local issue to remote.")
   public int push(final String id) {
     return 0;
-  }
-
-  /**
-   * Transit from OPEN to IN_PROGRESS.
-   *
-   * @param id    issue id
-   * @param level log level
-   *
-   * @return the content to be displayed
-   *
-   * @throws IOException unable to write to file system
-   */
-  @ShellMethod("OPEN => IN_PROGRESS")
-  public String start(final @ShellOption(defaultValue = Constant.NULL,
-                                         help = Constant.ANY_FORMAT) String id,
-                      final @ShellOption(defaultValue = Constant.ERROR,
-                                         help = Constant.AVAILABLE_LEVEL) String level)
-    throws IOException {
-
-    return this.transit(id, Status.OPEN, Status.IN_PROGRESS, level);
-  }
-
-  /**
-   * Transit from IN_PROGRESS to DONE.
-   *
-   * @param id    issue id
-   * @param level log level
-   *
-   * @return the content to be displayed
-   *
-   * @throws IOException unable to write to file system
-   */
-  @ShellMethod("IN_PROGRESS => DONE")
-  public String finish(final @ShellOption(defaultValue = Constant.NULL,
-                                          help = Constant.ANY_FORMAT) String id,
-                       final @ShellOption(defaultValue = Constant.ERROR,
-                                          help = Constant.AVAILABLE_LEVEL) String level)
-    throws IOException {
-
-    return this.transit(id, Status.IN_PROGRESS, Status.DONE, level);
-  }
-
-  /**
-   * Transit from DONE to CLOSE.
-   *
-   * @param id    issue id
-   * @param level log level
-   *
-   * @return the content to be displayed
-   *
-   * @throws IOException unable to write to file system
-   */
-  @ShellMethod("DONE => CLOSE")
-  public String resolve(final @ShellOption(defaultValue = Constant.NULL,
-                                           help = Constant.ANY_FORMAT) String id,
-                        final @ShellOption(defaultValue = Constant.ERROR,
-                                           help = Constant.AVAILABLE_LEVEL) String level)
-    throws IOException {
-
-    return this.transit(id, Status.DONE, Status.CLOSE, level);
-  }
-
-  /**
-   * Transit from DONE to OPEN.
-   *
-   * @param id    issue id
-   * @param level log level
-   *
-   * @return the content to be displayed
-   *
-   * @throws IOException unable to write to file system
-   */
-  @ShellMethod("DONE => OPEN")
-  public String rework(final @ShellOption(defaultValue = Constant.NULL,
-                                          help = Constant.ANY_FORMAT) String id,
-                       final @ShellOption(defaultValue = Constant.ERROR,
-                                          help = Constant.AVAILABLE_LEVEL) String level)
-    throws IOException {
-
-    return this.transit(id, Status.DONE, Status.OPEN, level);
-  }
-
-  /**
-   * Transit from CLOSE to OPEN.
-   *
-   * @param id    issue id
-   * @param level log level
-   *
-   * @return the content to be displayed
-   *
-   * @throws IOException unable to write to file system
-   */
-  @ShellMethod("CLOSE => OPEN")
-  public String reopen(final @ShellOption(defaultValue = Constant.NULL,
-                                          help = Constant.ANY_FORMAT) String id,
-                       final @ShellOption(defaultValue = Constant.ERROR,
-                                          help = Constant.AVAILABLE_LEVEL) String level)
-    throws IOException {
-
-    return this.transit(id, Status.CLOSE, Status.OPEN, level);
   }
 }

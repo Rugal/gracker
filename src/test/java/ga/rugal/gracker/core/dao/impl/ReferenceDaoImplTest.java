@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
@@ -15,8 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReferenceDaoImplTest extends UnitTestBase {
 
+  private static final String NAME = "test";
+
+  private final RefUpdate.Result result = RefUpdate.Result.FAST_FORWARD;
+
   @Autowired
-  private RefDatabase refDatabase;
+  private Repository repository;
 
   @Autowired
   private ReferenceDaoImpl dao;
@@ -27,12 +32,15 @@ public class ReferenceDaoImplTest extends UnitTestBase {
   @Mock
   private RefUpdate newUpdate;
 
-  private final RefUpdate.Result result = RefUpdate.Result.FAST_FORWARD;
+  @Mock
+  private RefDatabase refDatabase;
 
   @Before
   @SneakyThrows
   public void setUp() {
-    this.dao.setRefDatabase(this.refDatabase);
+    this.dao.setRepository(this.repository);
+
+    BDDMockito.given(this.repository.getRefDatabase()).willReturn(this.refDatabase);
 
     BDDMockito.given(this.refDatabase.newUpdate(BDDMockito.any(), BDDMockito.anyBoolean()))
       .willReturn(this.newUpdate);
@@ -43,7 +51,7 @@ public class ReferenceDaoImplTest extends UnitTestBase {
   @SneakyThrows
   @Test
   public void create() {
-    this.dao.create("test", this.id);
+    this.dao.create(NAME, this.id);
 
     BDDMockito.then(this.refDatabase).should(BDDMockito.times(1))
       .newUpdate(BDDMockito.any(), BDDMockito.anyBoolean());
@@ -56,7 +64,7 @@ public class ReferenceDaoImplTest extends UnitTestBase {
     BDDMockito.given(this.refDatabase.newUpdate(BDDMockito.any(), BDDMockito.anyBoolean()))
       .willThrow(IOException.class);
 
-    this.dao.create("test", this.id);
+    this.dao.create(NAME, this.id);
 
     BDDMockito.then(this.refDatabase).should(BDDMockito.times(1))
       .newUpdate(BDDMockito.any(), BDDMockito.anyBoolean());

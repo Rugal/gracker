@@ -121,7 +121,7 @@ public class CommitServiceImpl implements CommitService {
     content.setBody(this.blobService.body(issue.getContent().getBody()));
     content.setTitle(this.blobService.title(issue.getContent().getTitle()));
     final List<String> label = issue.getContent().getLabel();
-    if (null == label) {
+    if (null != label) {
       Collections.sort(label);
       content.setLabel(this.blobService.label(label));
     }

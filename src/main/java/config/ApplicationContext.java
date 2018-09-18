@@ -6,9 +6,10 @@ import java.util.Random;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.boot.ExitCodeExceptionMapper;
 import org.springframework.context.annotation.Bean;
@@ -74,15 +75,27 @@ public class ApplicationContext {
   }
 
   /**
-   * Reference database.
+   * Create Git command object.
    *
    * @param repository
    *
    * @return
    */
   @Bean
-  public RefDatabase refDatabase(final Repository repository) {
-    return repository.getRefDatabase();
+  public Git git(final Repository repository) {
+    return new Git(repository);
+  }
+
+  /**
+   * Configuration of Git.
+   *
+   * @param repository
+   *
+   * @return
+   */
+  @Bean
+  public StoredConfig storedConfig(final Repository repository) {
+    return repository.getConfig();
   }
 
   @Bean

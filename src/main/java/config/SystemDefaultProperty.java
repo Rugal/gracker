@@ -4,6 +4,8 @@ public interface SystemDefaultProperty {
 
   int ISSUE_NUMBER_LENGTH = 6;
 
+  String DEFAULT_REMOTE = "origin";
+
   String ENCODE = "UTF-8";
 
   String DEFAULT_EDITOR = "vim";

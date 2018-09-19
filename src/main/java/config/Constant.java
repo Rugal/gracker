@@ -46,4 +46,10 @@ public interface Constant {
   String NO_ID_ENTER = "Please enter id by either setting --id parameter or calling <use> command";
 
   String REMOTE_REPOSITORY = "The remote repository";
+
+  String UNABLE_REMOTE = "Unable to communicate with remote";
+
+  String UNABLE_REMOTE_HTTP = "Unable to communicate with remote even using HTTP";
+
+  String SSL_ERROR = "SSL certification error, try again with HTTP instead";
 }

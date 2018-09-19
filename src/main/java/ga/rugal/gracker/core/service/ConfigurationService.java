@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service;
 
 import java.io.IOException;
+import javax.annotation.Nullable;
 
 /**
  * Interface for configuration service.
@@ -18,4 +19,13 @@ public interface ConfigurationService {
    */
   void setSslVerify(boolean value) throws IOException;
 
+  /**
+   * get URL of remote.
+   *
+   * @param remote name of remote
+   *
+   * @return URL
+   */
+  @Nullable
+  String getUrl(String remote);
 }

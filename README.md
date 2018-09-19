@@ -34,3 +34,15 @@ The actual existence in `git`, this contains
 The actual existence in `git`, this contains the actual content in byte array format.  
 Everything like title, body, label, tree, commit are in this format.  
 
+## Log Level
+
+### TRACE
+Doesn't contain request specific information, usually used as tracing log to tell where the code went through.
+### DEBUG
+Does contain request specific information so as to help debugging.
+### INFO
+Does contain request specific information, this is not just for debugging but also let user know what's happening.
+### WARN
+Code logic might deviate from its normal flow, but still under control.
+### ERROR
+Code logic is out of control and needs to let user know what's happening.

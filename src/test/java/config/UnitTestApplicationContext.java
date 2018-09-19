@@ -4,6 +4,7 @@ import java.util.Random;
 
 import ga.rugal.PackageInfo;
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.RefDatabase;
 import org.eclipse.jgit.lib.Repository;
 import org.mockito.Mockito;
@@ -37,5 +38,11 @@ public class UnitTestApplicationContext {
   @Scope("prototype")
   public RefDatabase refDatabase() {
     return Mockito.mock(RefDatabase.class);
+  }
+
+  @Bean
+  @Scope("prototype")
+  public Git git() {
+    return Mockito.mock(Git.class);
   }
 }

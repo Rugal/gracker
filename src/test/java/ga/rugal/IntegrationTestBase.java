@@ -1,4 +1,4 @@
-package ga;
+package ga.rugal;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;

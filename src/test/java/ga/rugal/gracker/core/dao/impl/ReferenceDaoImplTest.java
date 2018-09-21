@@ -2,7 +2,8 @@ package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
 
-import ga.UnitTestBase;
+import ga.rugal.UnitTestBase;
+
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.RefDatabase;

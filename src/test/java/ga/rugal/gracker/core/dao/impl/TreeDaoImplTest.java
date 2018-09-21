@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import ga.rugal.gracker.core.entity.RawIssue;
 
-import ga.UnitTestBase;
+import ga.rugal.UnitTestBase;
+
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.ObjectReader;

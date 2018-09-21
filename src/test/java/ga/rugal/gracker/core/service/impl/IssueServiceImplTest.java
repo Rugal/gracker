@@ -1,6 +1,7 @@
 package ga.rugal.gracker.core.service.impl;
 
-import ga.IntegrationTestBase;
+import ga.rugal.IntegrationTestBase;
+
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
 import org.junit.Test;

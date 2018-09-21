@@ -10,6 +10,7 @@ import ga.rugal.gracker.core.service.BlobService;
 import ga.rugal.gracker.util.StringUtil;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -27,6 +28,7 @@ public class BlobServiceImpl implements BlobService {
 
   @Autowired
   @Getter
+  @Setter
   private BlobDao dao;
 
   private ObjectId createBlob(final String content) throws IOException {

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ga.rugal.gracker.core.dao.BlobDao;
 
-import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BlobDaoImpl implements BlobDao {
 
   @Autowired
-  @Getter
+  @Setter
   private Repository repository;
 
   /**

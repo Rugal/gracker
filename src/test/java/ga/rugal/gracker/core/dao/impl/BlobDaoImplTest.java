@@ -2,7 +2,8 @@ package ga.rugal.gracker.core.dao.impl;
 
 import java.io.IOException;
 
-import ga.UnitTestBase;
+import ga.rugal.UnitTestBase;
+
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class BlobDaoImplTest extends UnitTestBase {
 
+  @Autowired
   private Repository repository;
 
   @Autowired
@@ -33,7 +35,7 @@ public class BlobDaoImplTest extends UnitTestBase {
   @Before
   @SneakyThrows
   public void setUp() {
-    this.repository = this.dao.getRepository();
+    this.dao.setRepository(this.repository);
     BDDMockito.given(this.repository.newObjectInserter()).willReturn(this.inserter);
     BDDMockito.given(this.repository.newObjectReader()).willReturn(this.reader);
     BDDMockito.given(this.inserter.insert(BDDMockito.anyInt(), BDDMockito.any()))

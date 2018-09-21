@@ -2,7 +2,8 @@ package ga.rugal.gracker.core.dao.impl;
 
 import ga.rugal.gracker.core.dao.BlobDao;
 
-import ga.IntegrationTestBase;
+import ga.rugal.IntegrationTestBase;
+
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Assert;

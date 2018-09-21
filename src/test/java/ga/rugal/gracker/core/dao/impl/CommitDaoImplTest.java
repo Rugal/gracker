@@ -1,8 +1,7 @@
 package ga.rugal.gracker.core.dao.impl;
 
-import ga.rugal.gracker.core.entity.Issue;
-
 import ga.rugal.UnitTestBase;
+import ga.rugal.gracker.core.entity.Issue;
 
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
@@ -54,6 +53,26 @@ public class CommitDaoImplTest extends UnitTestBase {
   @Test
   public void create() {
     this.dao.create(this.issueCommit, this.id);
+
+    BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectInserter();
+    BDDMockito.then(this.inserter).should(BDDMockito.times(1)).flush();
+  }
+
+  @SneakyThrows
+  @Test
+  public void update() {
+    this.dao.update(this.issueCommit, this.id, this.id);
+
+    BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectInserter();
+    BDDMockito.then(this.inserter).should(BDDMockito.times(1)).flush();
+  }
+
+  @SneakyThrows
+  @Test
+  public void update_null_personIdent() {
+    this.issueCommit.setAssignee(null);
+
+    this.dao.update(this.issueCommit, this.id, this.id);
 
     BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectInserter();
     BDDMockito.then(this.inserter).should(BDDMockito.times(1)).flush();

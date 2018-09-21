@@ -32,7 +32,6 @@ public class CommitDaoImpl implements CommitDao {
   private Repository repository;
 
   @Autowired
-  @Setter
   private PersonIdent personIdent;
 
   /**

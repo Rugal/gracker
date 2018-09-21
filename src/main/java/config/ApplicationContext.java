@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.boot.ExitCodeExceptionMapper;
 import org.springframework.context.annotation.Bean;
@@ -85,9 +86,18 @@ public class ApplicationContext {
     return new Git(repository);
   }
 
+  /**
+   * Create default person identity bean.
+   *
+   * @param repository git repository
+   *
+   * @return person identity bean
+   */
   @Bean
-  public PersonIdent personIdent() {
-    return new PersonIdent("Rugal Bernstein", "test@mail.com");
+  public PersonIdent personIdent(final Repository repository) {
+    final StoredConfig config = repository.getConfig();
+    return new PersonIdent(config.getString("user", null, "name"),
+                           config.getString("user", null, "email"));
   }
 
   /**

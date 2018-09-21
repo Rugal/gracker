@@ -11,6 +11,7 @@ import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.service.TerminalService;
 import ga.rugal.gracker.util.StringUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
  * @author Rugal Bernstein
  */
 @Service("list")
+@Slf4j
 public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
 
   private static final String LINE_TEMPLATE = "| %s | %s | %s | %s | %s |";
@@ -29,10 +31,11 @@ public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
    */
   @Override
   public String print(final List<Issue> issues) {
-    return String.format("%s%n%s", this.header(), this.body(issues));
+    return String.format("%s%n%s%n", this.header(), this.body(issues));
   }
 
   private String header() {
+    LOG.trace("Start building list head");
     //issue | title | assignee | assigner | status
     return String.format(LINE_TEMPLATE,
                          StringUtil.center(this.print(StringUtil
@@ -80,6 +83,7 @@ public class ListTerminalServiceImpl implements TerminalService<List<Issue>> {
   }
 
   private String body(final List<Issue> issues) {
+    LOG.trace("Start building list body");
     final StringBuilder sb = new StringBuilder();
     issues.stream().forEach(issue -> sb.append(this.body(issue)).append("\n"));
     return sb.toString();

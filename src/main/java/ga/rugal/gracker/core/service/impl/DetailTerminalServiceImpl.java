@@ -12,6 +12,7 @@ import ga.rugal.gracker.core.service.TerminalService;
 import ga.rugal.gracker.util.DateUtil;
 import ga.rugal.gracker.util.StringUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
  * @author Rugal Bernstein
  */
 @Service("detail")
+@Slf4j
 public class DetailTerminalServiceImpl implements TerminalService<Issue> {
 
   /**
@@ -62,7 +64,7 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
   }
 
   private String label(final Issue issue) {
-
+    LOG.trace("Start building issue label");
     return String.format("%s: %s",
                          StringUtil.upperCase(Constant.LABEL),
                          Objects.isNull(issue.getContent().getLabel())
@@ -82,6 +84,7 @@ public class DetailTerminalServiceImpl implements TerminalService<Issue> {
   }
 
   private String author(final User user, final String authorLabel, final String timeLabel) {
+    LOG.trace("Start building issue author");
     return String.format("%s: %-20s %s: %-30s",
                          StringUtil.upperCase(authorLabel),
                          this.print(user.getAuthor(), TerminalColor.BLUE_F),

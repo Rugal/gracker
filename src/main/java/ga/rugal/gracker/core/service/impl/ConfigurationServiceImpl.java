@@ -40,6 +40,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
   @Nullable
   @Override
   public String getUrl(final String remote) {
+    LOG.debug("Read URL of remote [{}]", remote);
     final StoredConfig config = this.repository.getConfig();
     return config.getString("remote", remote, "url");
   }

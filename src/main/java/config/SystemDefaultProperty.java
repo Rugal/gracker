@@ -4,6 +4,8 @@ public interface SystemDefaultProperty {
 
   int ISSUE_NUMBER_LENGTH = 6;
 
+  String REFERENCE_TEMPLATE = "refs/%s/%s";
+
   String DEFAULT_REMOTE = "origin";
 
   String ENCODE = "UTF-8";

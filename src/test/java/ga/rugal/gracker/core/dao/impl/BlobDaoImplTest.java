@@ -68,7 +68,7 @@ public class BlobDaoImplTest extends UnitTestBase {
   @SneakyThrows
   @Test
   public void read() {
-    this.dao.read(null);
+    this.dao.read(this.id);
 
     BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectReader();
     BDDMockito.then(this.reader).should(BDDMockito.times(1)).open(BDDMockito.any());
@@ -79,7 +79,7 @@ public class BlobDaoImplTest extends UnitTestBase {
   public void read_IOException() {
     BDDMockito.given(this.reader.open(BDDMockito.any())).willThrow(IOException.class);
 
-    this.dao.read(null);
+    this.dao.read(this.id);
 
     BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectReader();
     BDDMockito.then(this.reader).should(BDDMockito.times(1)).open(BDDMockito.any());

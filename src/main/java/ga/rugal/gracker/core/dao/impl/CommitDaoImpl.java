@@ -7,6 +7,7 @@ import ga.rugal.gracker.core.dao.CommitDao;
 import ga.rugal.gracker.core.entity.Issue;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.CommitBuilder;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Rugal Bernstein
  */
 @org.springframework.stereotype.Repository
+@Slf4j
 public class CommitDaoImpl implements CommitDao {
 
   @Autowired
@@ -52,6 +54,7 @@ public class CommitDaoImpl implements CommitDao {
    */
   @Override
   public ObjectId create(final Issue.Commit commit, final ObjectId treeId) throws IOException {
+    LOG.trace("Create commit object");
     return this.update(commit, treeId, null);
   }
 
@@ -62,16 +65,19 @@ public class CommitDaoImpl implements CommitDao {
   public ObjectId update(final Issue.Commit commit,
                          final ObjectId treeId,
                          final ObjectId parentId) throws IOException {
+    LOG.trace("Build commit information");
     final CommitBuilder commitBuilder = new CommitBuilder();
     commitBuilder.setTreeId(treeId);
     commitBuilder.setMessage(commit.getStatus().name());
     commitBuilder.setAuthor(this.getPersonIdent(commit.getAssigner()));
     commitBuilder.setCommitter(this.getPersonIdent(commit.getAssignee()));
     if (null != parentId) {
+      LOG.trace("Set parent id");
       commitBuilder.setParentId(parentId);
     }
     final ObjectInserter inserter = this.repository.newObjectInserter();
     final ObjectId commitId = inserter.insert(commitBuilder);
+    LOG.trace("Write to file system");
     inserter.flush();
     return commitId;
   }
@@ -81,6 +87,7 @@ public class CommitDaoImpl implements CommitDao {
    */
   @Override
   public RevCommit read(final ObjectId commit) throws IOException {
+    LOG.debug("Read commit [{}]", commit.name());
     final ObjectReader reader = this.repository.newObjectReader();
     final ObjectLoader loader = reader.open(commit);
     return RevCommit.parse(loader.getBytes());

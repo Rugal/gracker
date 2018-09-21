@@ -35,19 +35,20 @@ public class EditorServiceImpl implements EditorService {
    */
   @Override
   public String getEditor() {
+    LOG.trace("Get editor");
     if (null != System.getenv(GIT_EDITOR)) {
       final String env = System.getenv(GIT_EDITOR);
-      LOG.trace("Using GIT_EDITOR [{}]", env);
+      LOG.debug("Using GIT_EDITOR [{}]", env);
       return System.getenv(GIT_EDITOR);
     }
 
     if (null != System.getenv(EDITOR)) {
       final String env = System.getenv(EDITOR);
-      LOG.trace("Using EDITOR [{}]", env);
+      LOG.debug("Using EDITOR [{}]", env);
       return System.getenv(EDITOR);
     }
 
-    LOG.trace("Using DEFAULT EDITOR [{}]", SystemDefaultProperty.DEFAULT_EDITOR);
+    LOG.debug("Using DEFAULT EDITOR [{}]", SystemDefaultProperty.DEFAULT_EDITOR);
     return SystemDefaultProperty.DEFAULT_EDITOR;
   }
 
@@ -73,6 +74,7 @@ public class EditorServiceImpl implements EditorService {
         body.append(scanner.nextLine());
       }
 
+      LOG.trace("Build issue content");
       return Issue.builder()
         .title(title)
         .body(body.toString())
@@ -88,7 +90,7 @@ public class EditorServiceImpl implements EditorService {
   public List<String> createIssueLabel() throws InterruptedException,
                                                 ReadabilityException,
                                                 IOException {
-
+    LOG.trace("Create issue label");
     return this.updateIssueLabel(null);
   }
 
@@ -117,6 +119,7 @@ public class EditorServiceImpl implements EditorService {
       if (!scanner.hasNext()) {
         throw new ReadabilityException("No label found");
       }
+      LOG.trace("Build issue label");
       return Arrays.asList(scanner.nextLine().split(",")).stream()
         .map(String::trim)
         .filter(s -> !s.isEmpty())
@@ -125,6 +128,14 @@ public class EditorServiceImpl implements EditorService {
     }
   }
 
+  /**
+   * Write template content to file before user can view it.
+   *
+   * @param tempFile the target file
+   * @param content  the content to write
+   *
+   * @throws IOException unable to write to file system
+   */
   private void writeTemplate(final File tempFile, final String content) throws IOException {
     try (PrintWriter writer = new PrintWriter(tempFile, SystemDefaultProperty.ENCODE)) {
       writer.print(content);
@@ -143,10 +154,11 @@ public class EditorServiceImpl implements EditorService {
    */
   private File openFile(final File tempFile) throws IOException, InterruptedException {
     tempFile.deleteOnExit();
-    LOG.trace("Open temp file [{}]", tempFile.getPath());
+    LOG.debug("Open temp file [{}]", tempFile.getPath());
     final ProcessBuilder pb = new ProcessBuilder();
     pb.command(this.getEditor(), tempFile.getPath()).inheritIO();
     if (0 != pb.start().waitFor()) {
+      LOG.error("Editor process error out");
       throw new IOException("Unable to write issue content to file");
     }
     return tempFile;

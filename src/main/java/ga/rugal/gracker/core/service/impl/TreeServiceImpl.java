@@ -41,17 +41,17 @@ public class TreeServiceImpl implements TreeService {
    */
   @Override
   public Issue.Content read(final ObjectId treeId) throws IOException {
-    LOG.trace("Process tree object [{}]", treeId.getName());
+    LOG.debug("Process tree object [{}]", treeId.getName());
     final TreeWalk treeWalk = this.dao.read(treeId);
     final Issue.Content content = new Issue.Content();
     while (treeWalk.next()) {
       final ObjectId objectId = treeWalk.getObjectId(0);
       final String key = treeWalk.getPathString();
       final String value = this.blobService.read(objectId);
-      LOG.trace("Process blob object [{}] key [{}] value [{}]", objectId.getName(), key, value);
+      LOG.debug("Process blob object [{}] key [{}] value [{}]", objectId.getName(), key, value);
       if (Constant.LABEL.equals(treeWalk.getPathString())) {
         content.setLabel(Arrays.asList(value.split(",")));
-        LOG.trace("Process blob object [{}] with {} label(s)",
+        LOG.debug("Process blob object [{}] with {} label(s)",
                   objectId.getName(),
                   content.getLabel().size());
         continue;

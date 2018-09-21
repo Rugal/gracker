@@ -51,6 +51,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public RawIssue create(final Issue issue) throws IOException {
+    LOG.trace("Create issue");
     final RawIssue rawIssue = this.commitService.create(issue);
     this.referenceService.create(rawIssue.getCommit().getName(), rawIssue.getCommit());
     return rawIssue;
@@ -61,6 +62,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public RawIssue update(final Issue issue) throws IOException, IssueNotFoundException {
+    LOG.trace("Update issue");
     issue.getCommit().getAssignee().setTime(Instant.now().getEpochSecond());
     final RawIssue rawIssue = this.commitService.update(issue);
     this.referenceService.create(issue.getCommit().getId().getName(), rawIssue.getCommit());
@@ -85,7 +87,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public Issue get(final RevCommit revCommit) throws IOException {
-    LOG.trace("Assemble issue from commit [{}]", revCommit.getName());
+    LOG.debug("Assemble issue from commit [{}]", revCommit.getName());
     return Issue.builder()
       .commit(this.commitService.read(revCommit))
       .content(this.treeService.read(revCommit.getTree()))
@@ -97,6 +99,7 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public Optional<Issue> get(final String id) throws IOException {
+    LOG.debug("Get issue from commit id [{}]", id);
     final Optional<Ref> optional = this.referenceService.getDao().get(id);
     return optional.isPresent()
            ? Optional.of(this.get(optional.get().getObjectId()))
@@ -104,6 +107,7 @@ public class IssueServiceImpl implements IssueService {
   }
 
   private Issue getWithoutException(final ObjectId id) {
+    LOG.trace("Get issue without throwing exception");
     try {
       return this.get(this.commitService.getDao().read(id));
     } catch (final IOException ex) {
@@ -117,12 +121,13 @@ public class IssueServiceImpl implements IssueService {
    */
   @Override
   public List<Issue> getAllIssue() throws IOException {
+    LOG.trace("Get all issues");
     final List<Ref> all = this.referenceService.getDao().getAll();
     LOG.debug("Find {} issue(s)", all.size());
     return all.stream()
       .map(Ref::getObjectId)
       .filter(Objects::nonNull)
-      .map(id -> this.getWithoutException(id))//this is reference
+      .map(this::getWithoutException)//this is reference
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
@@ -133,9 +138,11 @@ public class IssueServiceImpl implements IssueService {
   @Override
   public Optional<String> getCurrentId(final String commandLineId) {
     if (!Constant.NULL.equals(commandLineId)) {
+      LOG.trace("Use command line issue as current issue");
       return Optional.of(commandLineId);
     }
     final ObjectId objectId = this.issueBasedPromptProvider.getId();
+    LOG.trace("Use prompt issue as current issue");
     return Objects.isNull(objectId)
            ? Optional.empty()
            : Optional.of(objectId.getName());

@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import ga.rugal.gracker.core.service.HttpCredentialService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @author Rugal Bernstein
  */
 @Service
+@Slf4j
 public class HttpCredentialServiceImpl implements HttpCredentialService {
 
   private CredentialsProvider credentialsProvider;
@@ -25,6 +27,7 @@ public class HttpCredentialServiceImpl implements HttpCredentialService {
   @Override
   public CredentialsProvider getCredentialsProvider() {
     if (Objects.isNull(this.credentialsProvider)) {
+      LOG.trace("Create and cache credential");
       final Console console = System.console();
       final String username = console.readLine("Username: ");
       final String password = new String(console.readPassword("Password: "));

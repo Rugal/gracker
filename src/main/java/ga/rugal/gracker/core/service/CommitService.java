@@ -29,8 +29,8 @@ public interface CommitService extends ServiceBase<CommitDao> {
 
   /**
    * Update a commit.<BR>
-   * Similar to {@link #create(ga.rugal.gracker.core.entity.Issue)} except it should
-   * keep track of the commit parent.
+   * Similar to {@link #create(ga.rugal.gracker.core.entity.Issue)} except it should keep track of
+   * the commit parent.
    *
    * @param issue the issue object to be updated
    *
@@ -42,7 +42,8 @@ public interface CommitService extends ServiceBase<CommitDao> {
   RawIssue update(Issue issue) throws IOException, IssueNotFoundException;
 
   /**
-   * Read and parse commit object from repository.
+   * Read and parse commit object from repository with issue id set.<BR>
+   * This method reads any commit object and traces back to the root to find its reference.
    *
    * @param commit the commit object
    *

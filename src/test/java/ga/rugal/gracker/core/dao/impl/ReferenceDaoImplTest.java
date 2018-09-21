@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import config.TestConstant;
+
 import ga.rugal.UnitTestBase;
 
 import lombok.SneakyThrows;
@@ -20,8 +22,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReferenceDaoImplTest extends UnitTestBase {
-
-  private static final String SAMPLE_ID = "0a1ff7fc424550a667b957beb58222af16bd2d60";
 
   private static final String NAME = "test";
 
@@ -73,7 +73,7 @@ public class ReferenceDaoImplTest extends UnitTestBase {
   @SneakyThrows
   @Test
   public void create_string() {
-    this.dao.create(NAME, SAMPLE_ID);
+    this.dao.create(NAME, TestConstant.SAMPLE_ID);
 
     BDDMockito.then(this.refDatabase).should(BDDMockito.times(1))
       .newUpdate(BDDMockito.any(), BDDMockito.anyBoolean());

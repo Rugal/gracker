@@ -52,6 +52,16 @@ public class TreeDaoImplTest extends UnitTestBase {
     BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectInserter();
   }
 
+  @SneakyThrows
+  @Test
+  public void create_no_label() {
+    this.rawContent.setLabel(null);
+
+    this.dao.create(this.rawContent);
+
+    BDDMockito.then(this.repository).should(BDDMockito.times(1)).newObjectInserter();
+  }
+
   /**
    * Ignore it as it contains instantiation.
    */

@@ -49,7 +49,7 @@ public class TreeServiceImpl implements TreeService {
       final String key = treeWalk.getPathString();
       final String value = this.blobService.read(objectId);
       LOG.debug("Process blob object [{}] key [{}] value [{}]", objectId.getName(), key, value);
-      if (Constant.LABEL.equals(treeWalk.getPathString())) {
+      if (Constant.LABEL.equals(key)) {
         content.setLabel(Arrays.asList(value.split(",")));
         LOG.debug("Process blob object [{}] with {} label(s)",
                   objectId.getName(),

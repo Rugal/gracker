@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import ga.rugal.gracker.core.service.HttpCredentialService;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class HttpCredentialServiceImpl implements HttpCredentialService {
 
+  @Setter
   private CredentialsProvider credentialsProvider;
 
   /**

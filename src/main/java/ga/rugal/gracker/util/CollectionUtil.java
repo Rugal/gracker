@@ -10,6 +10,9 @@ import java.util.Iterator;
  */
 public final class CollectionUtil {
 
+  private CollectionUtil() {
+  }
+
   /**
    * Compare 2 collections.<BR>
    * This method will go through each collection by iterator and compare each element by its value

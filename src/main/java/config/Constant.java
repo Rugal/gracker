@@ -52,4 +52,8 @@ public interface Constant {
   String UNABLE_REMOTE_HTTP = "Unable to communicate with remote even using HTTP";
 
   String SSL_ERROR = "SSL certification error, try again with HTTP instead";
+
+  String EDITOR = "EDITOR";
+
+  String GIT_EDITOR = "GIT_EDITOR";
 }

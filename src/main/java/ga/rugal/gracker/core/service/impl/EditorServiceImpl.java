@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import config.Constant;
 import config.SystemDefaultProperty;
 
 import ga.rugal.gracker.core.entity.Issue;
@@ -26,26 +27,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EditorServiceImpl implements EditorService {
 
-  private static final String EDITOR = "EDITOR";
-
-  private static final String GIT_EDITOR = "GIT_EDITOR";
-
   /**
    * {@inheritDoc}
    */
   @Override
   public String getEditor() {
     LOG.trace("Get editor");
-    if (null != System.getenv(GIT_EDITOR)) {
-      final String env = System.getenv(GIT_EDITOR);
+    if (null != System.getenv(Constant.GIT_EDITOR)) {
+      final String env = System.getenv(Constant.GIT_EDITOR);
       LOG.debug("Using GIT_EDITOR [{}]", env);
-      return System.getenv(GIT_EDITOR);
+      return System.getenv(Constant.GIT_EDITOR);
     }
 
-    if (null != System.getenv(EDITOR)) {
-      final String env = System.getenv(EDITOR);
+    if (null != System.getenv(Constant.EDITOR)) {
+      final String env = System.getenv(Constant.EDITOR);
       LOG.debug("Using EDITOR [{}]", env);
-      return System.getenv(EDITOR);
+      return System.getenv(Constant.EDITOR);
     }
 
     LOG.debug("Using DEFAULT EDITOR [{}]", SystemDefaultProperty.DEFAULT_EDITOR);

@@ -10,6 +10,7 @@ import ga.rugal.gracker.core.dao.ReferenceDao;
 import ga.rugal.gracker.core.service.ReferenceService;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -28,6 +29,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
   @Autowired
   @Getter
+  @Setter
   private ReferenceDao dao;
 
   /**

@@ -10,7 +10,6 @@ import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
@@ -25,6 +24,9 @@ public class CommitDaoImplTest extends UnitTestBase {
   private Issue.Commit issueCommit;
 
   @Autowired
+  private ObjectLoader loader;
+
+  @Autowired
   private CommitDaoImpl dao;
 
   @Mock
@@ -32,9 +34,6 @@ public class CommitDaoImplTest extends UnitTestBase {
 
   @Mock
   private ObjectReader reader;
-
-  @Mock
-  private ObjectLoader loader;
 
   @Mock
   private ObjectId id;
@@ -78,10 +77,6 @@ public class CommitDaoImplTest extends UnitTestBase {
     BDDMockito.then(this.inserter).should(BDDMockito.times(1)).flush();
   }
 
-  /**
-   * Ignore it as loader.getBytes is final method.
-   */
-  @Ignore
   @SneakyThrows
   @Test
   public void read() {

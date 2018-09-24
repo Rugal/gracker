@@ -5,7 +5,9 @@ import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.util.StringUtil;
 
 import com.google.gson.Gson;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +44,11 @@ public class TestApplicationContext {
 
   @Bean
   public byte[] testData() {
-    return StringUtil.getByte("Rugal Bernstein");
+    return StringUtil.getByte("tree 7a8bddbed9f82deb5d20acc587be5afcc4aade67\n"
+                              + "parent d7a91f2126b1077eb5fa35130f59aa4950edcb41\n"
+                              + "author Rugal Bernstein <test@mail.com> 1537557632 -0400\n"
+                              + "committer Rugal Bernstein <test@mail.com> 1537557632 -0400\n\n"
+                              + "Complete unit test for tree dao");
   }
 
   @Bean
@@ -87,5 +93,11 @@ public class TestApplicationContext {
     rawIssue.setCommit(Mockito.mock(ObjectId.class));
     rawIssue.setTree(Mockito.mock(ObjectId.class));
     return rawIssue;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public ObjectLoader objectLoader(final byte[] testData) {
+    return new ObjectLoader.SmallObject(Constants.OBJ_BLOB, testData);
   }
 }

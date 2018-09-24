@@ -8,6 +8,7 @@ import ga.rugal.gracker.core.dao.BlobDao;
 
 import lombok.SneakyThrows;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
@@ -21,6 +22,9 @@ public class BlobServiceImplTest extends UnitTestBase {
   @Autowired
   private BlobServiceImpl service;
 
+  @Autowired
+  private ObjectLoader objectLoader;
+
   @Mock
   private BlobDao dao;
 
@@ -33,6 +37,8 @@ public class BlobServiceImplTest extends UnitTestBase {
     this.service.setDao(this.dao);
 
     BDDMockito.given(this.dao.create(BDDMockito.any())).willReturn(this.id);
+
+    BDDMockito.given(this.dao.read(BDDMockito.any())).willReturn(this.objectLoader);
   }
 
   @SneakyThrows
@@ -87,5 +93,13 @@ public class BlobServiceImplTest extends UnitTestBase {
     this.service.label(Arrays.asList(CONTENT));
 
     BDDMockito.then(this.dao).should(BDDMockito.times(1)).create(BDDMockito.any());
+  }
+
+  @SneakyThrows
+  @Test
+  public void read() {
+    this.service.read(this.id);
+
+    BDDMockito.then(this.dao).should(BDDMockito.times(1)).read(BDDMockito.any());
   }
 }

@@ -3,7 +3,6 @@ package ga.rugal.gracker.core.dao.impl;
 import java.io.IOException;
 
 import ga.rugal.gracker.core.entity.RawIssue;
-
 import ga.rugal.UnitTestBase;
 
 import lombok.SneakyThrows;

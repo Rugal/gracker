@@ -1,5 +1,7 @@
 package config;
 
+import java.util.Arrays;
+
 import ga.rugal.gracker.core.entity.Issue;
 import ga.rugal.gracker.core.entity.RawIssue;
 import ga.rugal.gracker.util.StringUtil;
@@ -44,11 +46,7 @@ public class TestApplicationContext {
 
   @Bean
   public byte[] testData() {
-    return StringUtil.getByte("tree 7a8bddbed9f82deb5d20acc587be5afcc4aade67\n"
-                              + "parent d7a91f2126b1077eb5fa35130f59aa4950edcb41\n"
-                              + "author Rugal Bernstein <test@mail.com> 1537557632 -0400\n"
-                              + "committer Rugal Bernstein <test@mail.com> 1537557632 -0400\n\n"
-                              + "Complete unit test for tree dao");
+    return StringUtil.getByte(TestConstant.NO_PARENT_COMMIT);
   }
 
   @Bean
@@ -65,6 +63,16 @@ public class TestApplicationContext {
     content.setBody(Mockito.mock(ObjectId.class));
     content.setLabel(Mockito.mock(ObjectId.class));
     return content;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public RawIssue rawIssue(final RawIssue.Content rawContent) {
+    final RawIssue rawIssue = new RawIssue();
+    rawIssue.setContent(rawContent);
+    rawIssue.setCommit(Mockito.mock(ObjectId.class));
+    rawIssue.setTree(Mockito.mock(ObjectId.class));
+    return rawIssue;
   }
 
   @Bean
@@ -87,12 +95,21 @@ public class TestApplicationContext {
 
   @Bean
   @Scope("prototype")
-  public RawIssue rawIssue(final RawIssue.Content rawContent) {
-    final RawIssue rawIssue = new RawIssue();
-    rawIssue.setContent(rawContent);
-    rawIssue.setCommit(Mockito.mock(ObjectId.class));
-    rawIssue.setTree(Mockito.mock(ObjectId.class));
-    return rawIssue;
+  public Issue.Content issueContent() {
+    final Issue.Content content = new Issue.Content();
+    content.setBody(Constant.BODY);
+    content.setTitle(Constant.TITLE);
+    content.setLabel(Arrays.asList(Constant.ASSIGNEE, Constant.ASSIGNER));
+    return content;
+  }
+
+  @Bean
+  @Scope("prototype")
+  public Issue issue(final Issue.Commit commit, Issue.Content content) {
+    return Issue.builder()
+      .commit(commit)
+      .content(content)
+      .build();
   }
 
   @Bean

@@ -3,7 +3,6 @@ package ga.rugal.gracker.core.service.impl;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import ga.rugal.gracker.core.dao.CommitDao;
@@ -17,6 +16,7 @@ import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.core.service.TreeService;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -34,15 +34,19 @@ public class CommitServiceImpl implements CommitService {
 
   @Autowired
   @Getter
+  @Setter
   private CommitDao dao;
 
   @Autowired
+  @Setter
   private BlobService blobService;
 
   @Autowired
+  @Setter
   private TreeService treeService;
 
   @Autowired
+  @Setter
   private ReferenceService referenceService;
 
   /**
@@ -64,9 +68,8 @@ public class CommitServiceImpl implements CommitService {
     LOG.trace("Read commit");
     final RevCommit commit = this.dao.read(commitId);
     final RevCommit root = this.getRoot(commit);
-    if (Objects.nonNull(root)) {
-      LOG.debug("Commit [{}] is under issue [{}]", commitId.getName(), root.getName());
-    }
+
+    LOG.debug("Commit [{}] is under issue [{}]", commitId.getName(), root.getName());
 
     LOG.trace("Build commit");
     return Issue.builder()

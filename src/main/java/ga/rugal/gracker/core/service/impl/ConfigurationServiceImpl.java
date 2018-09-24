@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import ga.rugal.gracker.core.service.ConfigurationService;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class ConfigurationServiceImpl implements ConfigurationService {
 
   @Autowired
+  @Setter
   private Repository repository;
 
   /**

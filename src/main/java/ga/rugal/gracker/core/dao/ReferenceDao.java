@@ -49,7 +49,7 @@ public interface ReferenceDao {
   List<Ref> getAll() throws IOException;
 
   /**
-   * Get reference by any format of id.
+   * Get local reference by any format of id.
    *
    * @param id in any format
    *
@@ -58,4 +58,16 @@ public interface ReferenceDao {
    * @throws IOException unable to read from file system
    */
   Optional<Ref> get(String id) throws IOException;
+
+  /**
+   * Get remote reference by its issue id.
+   *
+   * @param remote remote name
+   * @param id     issue id
+   *
+   * @return optional reference object
+   *
+   * @throws IOException unable to read from file system
+   */
+  Optional<Ref> getRemote(String remote, String id) throws IOException;
 }

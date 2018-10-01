@@ -70,7 +70,7 @@ public class ApplicationContext {
   @SneakyThrows
   public Repository repository() {
     final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-    builder.setGitDir(new File(".git"));
+    builder.setGitDir(new File(SystemDefaultProperty.GIT_FOLDER));
     return builder.build();
   }
 

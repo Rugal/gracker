@@ -7,10 +7,8 @@ import java.util.Optional;
 import config.Constant;
 import config.SystemDefaultProperty;
 
-import ga.rugal.gracker.core.service.CommitService;
 import ga.rugal.gracker.core.service.ConfigurationService;
 import ga.rugal.gracker.core.service.HttpCredentialService;
-import ga.rugal.gracker.core.service.IssueService;
 import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.util.LogUtil;
 
@@ -23,6 +21,8 @@ import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.merge.MergeStrategy;
+import org.eclipse.jgit.merge.ThreeWayMerger;
 import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RefSpec;
@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.util.FileCopyUtils;
 
 /**
  * Status and network related commands.
@@ -50,13 +51,7 @@ public class TransmissionCommand {
   private Git git;
 
   @Autowired
-  private IssueService issueService;
-
-  @Autowired
   private ReferenceService referenceService;
-
-  @Autowired
-  private CommitService commitService;
 
   /**
    * Fulfill reference specification.
@@ -238,10 +233,29 @@ public class TransmissionCommand {
 
     LogUtil.setLogLevel(level);
     //get remote reference
-    final Optional<Ref> remoteReference = this.referenceService.getRemoteReference(remote, id);
-    final Optional<Ref> localReference = this.referenceService.getLocalReference(id);
+    final Optional<Ref> remoteReference = this.referenceService.getDao().getRemote(remote, id);
+    if (!remoteReference.isPresent()) {
+      return String.format("Target issue id [%s] not exist in [%s], try fetch first", id, remote);
+    }
     //check existence of local reference
+    final Optional<Ref> localReference = this.referenceService.getDao().get(id);
+    if (!localReference.isPresent()) {
+      //just copy
+      LOG.debug("Local reference not found for issue [{}]. Copy remote reference directly", id);
+      FileCopyUtils.copy(this.referenceService.getRemoteReferenceFile(remote, id),
+                         this.referenceService.getLocalReferenceFile(id));
+      return String.format("Create issue [%s] from remote reference", id);
+    }
     //find common parent commit
-    return "";
+    final ThreeWayMerger merger = MergeStrategy.RECURSIVE.newMerger(this.git.getRepository());
+    final boolean noConflict = merger.merge(localReference.get().getObjectId(),
+                                            remoteReference.get().getObjectId());
+
+    if (noConflict) {
+      return String.format("Rebase complete, result tree id [%s]",
+                           merger.getResultTreeId().getName());
+    }
+
+    return "Fail to rebase";
   }
 }

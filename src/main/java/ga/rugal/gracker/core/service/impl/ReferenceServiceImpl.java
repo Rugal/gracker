@@ -1,5 +1,6 @@
 package ga.rugal.gracker.core.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -59,24 +60,22 @@ public class ReferenceServiceImpl implements ReferenceService {
    * {@inheritDoc}
    */
   @Override
-  public Optional<Ref> getRemoteReference(final String remote, final String id)
-    throws IOException {
-
-    return this.dao.get(String.format(SystemDefaultProperty.REMOTE_REFERENCE_TEMPLATE,
-                                      remote,
-                                      Constant.REFERENCE,
-                                      id));
+  public File getRemoteReferenceFile(final String remote, final String id) {
+    final String format = String.format(SystemDefaultProperty.REMOTE_REFERENCE_TEMPLATE,
+                                        remote,
+                                        Constant.REFERENCE,
+                                        id);
+    return new File(SystemDefaultProperty.GIT_FOLDER, format);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public Optional<Ref> getLocalReference(final String id)
-    throws IOException {
-
-    return this.dao.get(String.format(SystemDefaultProperty.REFERENCE_TEMPLATE,
-                                      Constant.REFERENCE,
-                                      id));
+  public File getLocalReferenceFile(final String id) {
+    final String format = String.format(SystemDefaultProperty.REFERENCE_TEMPLATE,
+                                        Constant.REFERENCE,
+                                        id);
+    return new File(SystemDefaultProperty.GIT_FOLDER, format);
   }
 }

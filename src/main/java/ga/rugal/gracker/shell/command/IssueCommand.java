@@ -93,7 +93,7 @@ public class IssueCommand {
 
     final Issue issue = optional.get();
     if (!from.equals(issue.getCommit().getStatus())) {
-      return String.format("Issue status must be %s", from);
+      return String.format("Issue status must be [%s]", from);
     }
 
     issue.getCommit().setStatus(to);
@@ -130,7 +130,7 @@ public class IssueCommand {
     }
     final IssueEvent event = new IssueEvent(this, optional.get().getCommit().getId());
     this.applicationEventPublisher.publishEvent(event);
-    return String.format("Set current issue as %s",
+    return String.format("Set current issue as [%s]",
                          id.substring(0, SystemDefaultProperty.ISSUE_NUMBER_LENGTH));
   }
 
@@ -305,7 +305,7 @@ public class IssueCommand {
       return e.getMessage();
     }
 
-    LOG.trace("Issue [{}] use to have {} label(s)",
+    LOG.trace("Issue [{}] use to have [{}] label(s)",
               issue.getCommit().getId().getName(),
               issue.getContent().getLabel() == null
               ? 0
@@ -318,7 +318,7 @@ public class IssueCommand {
     issue.getContent().setLabel(labels);
     try {
       this.issueService.update(issue);
-      LOG.trace("Issue [{}] now has {} label(s)",
+      LOG.trace("Issue [{}] now has [{}] label(s)",
                 issue.getCommit().getId().getName(),
                 issue.getContent().getLabel() == null
                 ? 0

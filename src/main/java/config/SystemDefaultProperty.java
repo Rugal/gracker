@@ -4,6 +4,8 @@ public interface SystemDefaultProperty {
 
   int ISSUE_NUMBER_LENGTH = 6;
 
+  String GIT_FOLDER = ".git";
+
   String REFERENCE_TEMPLATE = "refs/%s/%s";
 
   String REMOTE_REFERENCE_TEMPLATE = "refs/remotes/%s/%s/%s";

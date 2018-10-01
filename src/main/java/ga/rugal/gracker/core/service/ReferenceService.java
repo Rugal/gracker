@@ -1,12 +1,12 @@
 package ga.rugal.gracker.core.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
 import ga.rugal.gracker.core.dao.ReferenceDao;
 
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RefUpdate;
 
 /**
@@ -41,25 +41,21 @@ public interface ReferenceService extends ServiceBase<ReferenceDao> {
   Optional<ObjectId> getHead(ObjectId id) throws IOException;
 
   /**
-   * Get remote reference by its issue id.
+   * Get remote reference file.
    *
-   * @param remote remote name
-   * @param id     issue id
+   * @param remote remote repository name
+   * @param id     target issue id
    *
-   * @return optional reference object
-   *
-   * @throws IOException unable to read from file system
+   * @return file object
    */
-  Optional<Ref> getRemoteReference(String remote, String id) throws IOException;
+  File getRemoteReferenceFile(String remote, String id);
 
   /**
-   * Get local reference by its issue id.
+   * Get local reference file.
    *
-   * @param id issue id
+   * @param id target issue id
    *
-   * @return optional reference object
-   *
-   * @throws IOException unable to read from file system
+   * @return file object
    */
-  Optional<Ref> getLocalReference(String id) throws IOException;
+  File getLocalReferenceFile(String id);
 }

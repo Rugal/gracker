@@ -30,6 +30,13 @@ public class ReferenceDaoImpl implements ReferenceDao {
   @Setter
   private Repository repository;
 
+  private Optional<Ref> doGetReference(final String prefix) throws IOException {
+    final List<Ref> refs = this.repository.getRefDatabase().getRefsByPrefix(prefix);
+    return refs.isEmpty()
+           ? Optional.empty()
+           : Optional.of(refs.get(0));
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -64,13 +71,23 @@ public class ReferenceDaoImpl implements ReferenceDao {
    */
   @Override
   public Optional<Ref> get(final String id) throws IOException {
-    LOG.debug("Get reference [{}]", id);
     final String prefix = String.format(SystemDefaultProperty.REFERENCE_TEMPLATE,
                                         Constant.REFERENCE,
                                         id);
-    final List<Ref> refs = this.repository.getRefDatabase().getRefsByPrefix(prefix);
-    return refs.isEmpty()
-           ? Optional.empty()
-           : Optional.of(refs.get(0));
+    LOG.debug("Get local reference [{}]", prefix);
+    return this.doGetReference(prefix);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<Ref> getRemote(final String remote, final String id) throws IOException {
+    final String prefix = String.format(SystemDefaultProperty.REMOTE_REFERENCE_TEMPLATE,
+                                        remote,
+                                        Constant.REFERENCE,
+                                        id);
+    LOG.debug("Get remote reference [{}]", prefix);
+    return this.doGetReference(prefix);
   }
 }

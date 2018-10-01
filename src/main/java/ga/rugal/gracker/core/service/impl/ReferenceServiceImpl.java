@@ -54,4 +54,29 @@ public class ReferenceServiceImpl implements ReferenceService {
            ? Optional.of(optional.get().getObjectId())
            : Optional.empty();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<Ref> getRemoteReference(final String remote, final String id)
+    throws IOException {
+
+    return this.dao.get(String.format(SystemDefaultProperty.REMOTE_REFERENCE_TEMPLATE,
+                                      remote,
+                                      Constant.REFERENCE,
+                                      id));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<Ref> getLocalReference(final String id)
+    throws IOException {
+
+    return this.dao.get(String.format(SystemDefaultProperty.REFERENCE_TEMPLATE,
+                                      Constant.REFERENCE,
+                                      id));
+  }
 }

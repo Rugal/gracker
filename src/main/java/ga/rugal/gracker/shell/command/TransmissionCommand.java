@@ -2,12 +2,16 @@ package ga.rugal.gracker.shell.command;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import config.Constant;
 import config.SystemDefaultProperty;
 
+import ga.rugal.gracker.core.service.CommitService;
 import ga.rugal.gracker.core.service.ConfigurationService;
 import ga.rugal.gracker.core.service.HttpCredentialService;
+import ga.rugal.gracker.core.service.IssueService;
+import ga.rugal.gracker.core.service.ReferenceService;
 import ga.rugal.gracker.util.LogUtil;
 
 import com.google.common.collect.Lists;
@@ -18,6 +22,7 @@ import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.FetchResult;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RefSpec;
@@ -43,6 +48,15 @@ public class TransmissionCommand {
 
   @Autowired
   private Git git;
+
+  @Autowired
+  private IssueService issueService;
+
+  @Autowired
+  private ReferenceService referenceService;
+
+  @Autowired
+  private CommitService commitService;
 
   /**
    * Fulfill reference specification.
@@ -112,14 +126,16 @@ public class TransmissionCommand {
 
     FetchResult result;
     try {
-      LOG.debug("Fetch object from {} {}", fetch.getRemote(), fetch.getRefSpecs().get(0));
+      LOG.debug("Fetch object from [{}] [{}]", fetch.getRemote(), fetch.getRefSpecs().get(0));
       result = this.doFetch(fetch);
     } catch (final TransportException e) {
       try {
         LOG.warn(Constant.SSL_ERROR);
         this.configurationService.setSslVerify(false);
 
-        LOG.debug("Fetch object from {} {} by HTTP", fetch.getRemote(), fetch.getRefSpecs().get(0));
+        LOG.debug("Fetch object from [{}] [{}] by HTTP",
+                  fetch.getRemote(),
+                  fetch.getRefSpecs().get(0));
         result = this.doFetch(fetch);
       } catch (final GitAPIException ex) {
         LOG.error(Constant.UNABLE_REMOTE_HTTP, ex);
@@ -129,7 +145,7 @@ public class TransmissionCommand {
       LOG.error(Constant.UNABLE_REMOTE, ex);
       return ex.getMessage();
     }
-    LOG.trace("Fetch complete: {}", result.getMessages());
+    LOG.trace("Fetch complete: [{}]", result.getMessages());
     return "Fetch complete";
   }
 
@@ -163,7 +179,7 @@ public class TransmissionCommand {
 
     final String url = this.configurationService.getUrl(remote);
     if (null == url) {
-      LOG.debug("Invalid URL for remote {}", remote);
+      LOG.debug("Invalid URL for remote [{}]", remote);
       return String.format("Invalid URL for remote %s", remote);
     }
     if (url.startsWith("http")) {
@@ -173,7 +189,7 @@ public class TransmissionCommand {
 
     List<PushResult> result;
     try {
-      LOG.debug("Push object to {} {}", pull.getRemote(), pull.getRefSpecs().get(0));
+      LOG.debug("Push object to [{}] [{}]", pull.getRemote(), pull.getRefSpecs().get(0));
       result = Lists.newArrayList(pull.call());
     } catch (final TransportException e) {
       if (e.getMessage().endsWith("not authorized")) {
@@ -183,7 +199,9 @@ public class TransmissionCommand {
         LOG.warn(Constant.SSL_ERROR);
         this.configurationService.setSslVerify(false);
 
-        LOG.debug("Fetch object from {} {} by HTTP", pull.getRemote(), pull.getRefSpecs().get(0));
+        LOG.debug("Fetch object from [{}] [{}] by HTTP",
+                  pull.getRemote(),
+                  pull.getRefSpecs().get(0));
         result = Lists.newArrayList(pull.call());
       } catch (final GitAPIException ex) {
         LOG.error(Constant.UNABLE_REMOTE_HTTP, ex);
@@ -194,7 +212,36 @@ public class TransmissionCommand {
       return ex.getMessage();
     }
 
-    LOG.trace("Push complete: {}", result.get(0).getMessages());
+    LOG.trace("Push complete: [{}]", result.get(0).getMessages());
     return "Push complete";
+  }
+
+  /**
+   * Rebase remote reference to local reference.
+   *
+   * @param remote name of remote repository
+   * @param id     target issue id
+   * @param level  log level
+   *
+   * @return content to display
+   *
+   * @throws IOException unable to access file system
+   */
+  @ShellMethod("Rebase to remote reference to local reference.")
+  public String rebase(final @ShellOption(defaultValue = SystemDefaultProperty.DEFAULT_REMOTE,
+                                          help = Constant.REMOTE_REPOSITORY) String remote,
+                       final @ShellOption(defaultValue = Constant.NULL,
+                                          help = Constant.ANY_FORMAT) String id,
+                       final @ShellOption(defaultValue = Constant.ERROR,
+                                          help = Constant.AVAILABLE_LEVEL) String level)
+    throws IOException {
+
+    LogUtil.setLogLevel(level);
+    //get remote reference
+    final Optional<Ref> remoteReference = this.referenceService.getRemoteReference(remote, id);
+    final Optional<Ref> localReference = this.referenceService.getLocalReference(id);
+    //check existence of local reference
+    //find common parent commit
+    return "";
   }
 }

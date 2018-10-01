@@ -6,6 +6,7 @@ import java.util.Optional;
 import ga.rugal.gracker.core.dao.ReferenceDao;
 
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.RefUpdate;
 
 /**
@@ -29,7 +30,7 @@ public interface ReferenceService extends ServiceBase<ReferenceDao> {
   RefUpdate.Result create(String name, ObjectId commitId) throws IOException;
 
   /**
-   * Get the head of current issue, which is the most recent commit object.
+   * Get the head of this issue, which is the most recent commit object.
    *
    * @param id the issue/reference object
    *
@@ -38,4 +39,27 @@ public interface ReferenceService extends ServiceBase<ReferenceDao> {
    * @throws IOException unable to read from file system
    */
   Optional<ObjectId> getHead(ObjectId id) throws IOException;
+
+  /**
+   * Get remote reference by its issue id.
+   *
+   * @param remote remote name
+   * @param id     issue id
+   *
+   * @return optional reference object
+   *
+   * @throws IOException unable to read from file system
+   */
+  Optional<Ref> getRemoteReference(String remote, String id) throws IOException;
+
+  /**
+   * Get local reference by its issue id.
+   *
+   * @param id issue id
+   *
+   * @return optional reference object
+   *
+   * @throws IOException unable to read from file system
+   */
+  Optional<Ref> getLocalReference(String id) throws IOException;
 }

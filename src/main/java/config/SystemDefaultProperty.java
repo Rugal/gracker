@@ -6,6 +6,8 @@ public interface SystemDefaultProperty {
 
   String REFERENCE_TEMPLATE = "refs/%s/%s";
 
+  String REMOTE_REFERENCE_TEMPLATE = "refs/remotes/%s/%s/%s";
+
   String DEFAULT_REMOTE = "origin";
 
   String ENCODE = "UTF-8";

@@ -95,9 +95,9 @@ public class ApplicationContext {
    */
   @Bean
   public PersonIdent personIdent(final Repository repository) {
-    final StoredConfig config = repository.getConfig();
-    return new PersonIdent(config.getString("user", null, "name"),
-                           config.getString("user", null, "email"));
+    final StoredConfig storedConfig = repository.getConfig();
+    return new PersonIdent(storedConfig.getString("user", null, "name"),
+                           storedConfig.getString("user", null, "email"));
   }
 
   /**

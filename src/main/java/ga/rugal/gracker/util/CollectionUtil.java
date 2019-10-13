@@ -28,20 +28,17 @@ public final class CollectionUtil {
     if (null == a && null == b) {
       return true;
     }
-    if (null != a && null != b) {
-      if (a.size() != b.size()) {
+    if (null == a || null == b || a.size() != b.size()) {
+      return false;
+    }
+    for (final Iterator iteratorA = a.iterator(), iteratorB = b.iterator();
+         iteratorA.hasNext() && iteratorB.hasNext();) {
+      final Object nextA = iteratorA.next();
+      final Object nextB = iteratorB.next();
+      if (!nextA.equals(nextB)) {
         return false;
       }
-      for (Iterator iteratorA = a.iterator(), iteratorB = b.iterator();
-           iteratorA.hasNext() && iteratorB.hasNext();) {
-        final Object nextA = iteratorA.next();
-        final Object nextB = iteratorB.next();
-        if (!nextA.equals(nextB)) {
-          return false;
-        }
-      }
-      return true;
     }
-    return false;
+    return true;
   }
 }

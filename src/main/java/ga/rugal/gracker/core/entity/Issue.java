@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.ObjectId;
 
 /**
- * Issue entity.
+ * Issue entity. Contains parsed git information. Mostly human readable.
  *
  * @author Rugal Bernstein
  */

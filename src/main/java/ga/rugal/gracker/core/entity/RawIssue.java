@@ -4,7 +4,7 @@ import lombok.Data;
 import org.eclipse.jgit.lib.ObjectId;
 
 /**
- * RawIssue entity.
+ * RawIssue entity. Contains unparsed git object information.
  *
  * @author Rugal Bernstein
  */
